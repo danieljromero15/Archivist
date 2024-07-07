@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-import 'nav_bar.dart';
+import '../nav_bar.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key, this.title = 'Settings'});

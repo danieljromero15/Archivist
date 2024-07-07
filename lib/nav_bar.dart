@@ -1,5 +1,5 @@
-import 'package:archivist/home.dart';
-import 'package:archivist/settings_page.dart';
+import 'package:archivist/pages/home.dart';
+import 'package:archivist/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -37,9 +37,9 @@ class NavBar {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.inversePrimary,
             ),
-            child: const Text(
+            child: Text(
               "Archivist",
-              style: TextStyle(fontSize: 25),
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
           ListTile(
