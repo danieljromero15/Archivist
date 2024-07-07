@@ -1,6 +1,7 @@
 import 'package:archivist/home.dart';
 import 'package:archivist/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class NavBar {
   AppBar buildAppBar(BuildContext context, String title) {
@@ -45,19 +46,23 @@ class NavBar {
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HomePage()));
+              //Navigator.pop(context); Not sure if this is doing anything important
+              Navigator.of(context).push(PageTransition(
+                      child: const HomePage(),
+                      type: PageTransitionType
+                          .fade) // not the biggest fan of this animation but it's okay enough
+                  );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
+              leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const SettingsPage())
-                );
-              }
-          )
+                //Navigator.pop(context);
+                Navigator.of(context).push(PageTransition(
+                    child: const SettingsPage(),
+                    type: PageTransitionType.fade));
+              })
         ],
       ),
     );
