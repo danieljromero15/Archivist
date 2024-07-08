@@ -1,6 +1,9 @@
 import 'package:archivist/api/igdb_api.dart';
+import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
+import '../db/use_database.dart';
 import '../nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,39 +25,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //int searchLen = 1;
-  bool called = false;
-
-  // placeholders to prevent error
-  /*JsonList searchList = [
-    {
-      'id': 740,
-      'cover': 128403,
-      'first_release_date': 1005782400,
-      'name': 'Halo: Combat Evolved'
-    }
-  ];*/
-  List<String> coversList = [];
-
-  void getGames() {
-    if (!called) {
-      if(coversList.isNotEmpty) coversList = [];
-      IGDBApi().searchGames("Final Fantasy").then((r) {
-        print(r);
-        for (var game in r) {
-          IGDBApi().getCoverUrl(game).then((url) {
-            print('adding ${game['name']}');
-            setState(() {
-              //searchLen = coversList.length;
-              coversList.add(url);
-            });
-          });
-        }
-      });
-      called = true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -63,24 +33,20 @@ class _HomePageState extends State<HomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    //IGDBApi().test();
-
-    getGames();
+    //db().test();
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(PageTransition(
+                child: const SearchPage(),
+                type: PageTransitionType.fade));
+          },
           tooltip: 'Search',
           child: const Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
-        body: GridView.count(
-          crossAxisCount: (coversList.length / 5).round(),
-          children: List.generate(coversList.length, (index) {
-            return Center(
-              child: Image.network(coversList[index]),
-            );
-          }),
-        ));
+        body: const Text('hi')
+    );
   }
 }
