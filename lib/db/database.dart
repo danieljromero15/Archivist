@@ -15,6 +15,7 @@ class GameItems extends Table {
   TextColumn get name => text().withLength(min:1, max: 128)();
   DateTimeColumn get releaseDate => dateTime().nullable()();
   IntColumn get cover => integer().nullable()();
+  TextColumn get summary => text().nullable()();
   IntColumn get status => integer().nullable().references(GameCategory, #id)();
   //clientDefault((){return 0;})
 }

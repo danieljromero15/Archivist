@@ -66,7 +66,7 @@ class IGDBApi {
             headers: headers,
             // anything here needs to probably be reflected
             body:
-                'search "$name"; fields name, cover, first_release_date; limit 25;')
+                'search "$name"; fields name, cover, first_release_date, summary; limit 25;')
         as JsonList;
     prevResponse = response;
     return response;
