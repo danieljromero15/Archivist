@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../api/igdb_api.dart';
+import '../db/use_database.dart';
+import '../json_types.dart';
 import '../nav_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -15,22 +17,19 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   bool called = false;
+  JsonList gamesList = [];
   List<String> coversList = [];
 
   void getGames() {
     if (!called) {
       if(coversList.isNotEmpty) coversList = [];
       IGDBApi().searchGames("Final Fantasy").then((r) {
-        print(r);
-        for (var game in r) {
-          IGDBApi().getCoverUrl(game).then((url) {
-            print('adding ${game['name']}');
-            setState(() {
-              //searchLen = coversList.length;
-              coversList.add(url);
-            });
+        IGDBApi().getCoverUrls(r).then((urls) {
+          setState(() {
+            gamesList = r;
+            coversList = urls;
           });
-        }
+        });
       });
       called = true;
     }
@@ -54,10 +53,17 @@ class _SearchPageState extends State<SearchPage> {
           child: const Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
         body: GridView.count(
-          crossAxisCount: (coversList.length / 5).round(),
+          crossAxisCount: (coversList.length / 2).round(),
           children: List.generate(coversList.length, (index) {
             return Center(
-              child: Image.network(coversList[index]),
+              //child: Image.network(coversList[index]),
+              child: IconButton(
+                icon: Image.network(coversList[index]),
+                iconSize: 50,
+                onPressed: (){
+                  db.insert(gamesList[index]);
+                },
+              )
             );
           }),
         ));

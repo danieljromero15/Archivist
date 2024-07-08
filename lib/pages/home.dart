@@ -3,6 +3,7 @@ import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../db/database.dart';
 import '../db/use_database.dart';
 import '../nav_bar.dart';
 
@@ -25,6 +26,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<GameItem> data = [];
+  List<String> coverUrls = [];
+
+  void getDBData() async{
+    db.get().then((response) {
+      //print(response);
+      //print(response?[0].cover);
+      IGDBApi().getCoverUrls(response!).then((i) {
+        //print(i);
+        setState(() {
+          //print(response.runtimeType);
+          data = response;
+          coverUrls = i;
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -34,6 +53,9 @@ class _HomePageState extends State<HomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     //db().test();
+    getDBData();
+
+
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
@@ -45,8 +67,23 @@ class _HomePageState extends State<HomePage> {
           },
           tooltip: 'Search',
           child: const Icon(Icons.search),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-        body: const Text('hi')
+        ),
+        //body: Text('hi')
+        body: data.isNotEmpty? GridView.count(
+          crossAxisCount: (data.length).round(),
+          children: List.generate(coverUrls.length, (index) {
+            return Center(
+              //child: Image.network(coversList[index]),
+                child: IconButton(
+                  icon: Image.network(coverUrls[index]),
+                  iconSize: 50,
+                  onPressed: (){
+                    print(data[index]);
+                  },
+                )
+            );
+          }),
+        ) : const Text("") // TODO replace with loading icon?
     );
   }
 }
