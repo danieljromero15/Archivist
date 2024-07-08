@@ -12,22 +12,28 @@ part 'database.g.dart';
 
 class GameItems extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().withLength(min:1, max: 128)();
+
+  TextColumn get name => text().withLength(min: 1, max: 128)();
+
   DateTimeColumn get releaseDate => dateTime().nullable()();
+
   IntColumn get cover => integer().nullable()();
+
   TextColumn get summary => text().nullable()();
+
   IntColumn get status => integer().nullable().references(GameCategory, #id)();
-  //clientDefault((){return 0;})
+//clientDefault((){return 0;})
 }
 
 class GameCategory extends Table {
   IntColumn get id => integer().autoIncrement()();
+
   TextColumn get statusName => text()();
 }
 
 @DriftDatabase(tables: [GameItems, GameCategory])
 class GameDB extends _$GameDB {
-  GameDB() : super (_openConnection());
+  GameDB() : super(_openConnection());
 
   @override
   int get schemaVersion => 2;

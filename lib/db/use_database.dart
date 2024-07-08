@@ -5,9 +5,10 @@ import 'package:flutter/widgets.dart';
 import '../json_types.dart';
 import '../main.dart';
 
-class db{
+class db {
   static void list() async {
-    List<GameItem>? allItems = await database?.select(database!.gameItems).get();
+    List<GameItem>? allItems =
+        await database?.select(database!.gameItems).get();
     print('items in database: $allItems');
   }
 
@@ -15,17 +16,19 @@ class db{
     WidgetsFlutterBinding.ensureInitialized();
 
     await database?.into(database!.gameItems).insert(GameItemsCompanion.insert(
-      name: game['name'],
-      releaseDate: Value(DateTime.fromMillisecondsSinceEpoch(game['first_release_date'] * 1000)),
-      cover: Value(game['cover']),
-      summary: Value(game['summary']),
-      status: const Value(0),
-    ));
+          name: game['name'],
+          releaseDate: Value(DateTime.fromMillisecondsSinceEpoch(
+              game['first_release_date'] * 1000)),
+          cover: Value(game['cover']),
+          summary: Value(game['summary']),
+          status: const Value(0),
+        ));
     list();
   }
 
-  static Future<List<GameItem>?> get() async{
-    List<GameItem>? allItems = await database?.select(database!.gameItems).get();
+  static Future<List<GameItem>?> get() async {
+    List<GameItem>? allItems =
+        await database?.select(database!.gameItems).get();
     return allItems;
   }
 

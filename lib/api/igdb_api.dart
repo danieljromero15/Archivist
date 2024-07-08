@@ -120,7 +120,7 @@ class IGDBApi {
               '$protocol:${item['url'].toString().replaceFirst("t_thumb", "t_720p")}')
           .toList();
       return coverUrls;
-    }else{
+    } else {
       return [];
     }
   }

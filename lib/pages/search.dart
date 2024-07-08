@@ -22,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void getGames() {
     if (!called) {
-      if(coversList.isNotEmpty) coversList = [];
+      if (coversList.isNotEmpty) coversList = [];
       gamesApi?.searchGames("Final Fantasy").then((r) {
         gamesApi?.getCoverUrls(r).then((urls) {
           setState(() {
@@ -46,8 +46,7 @@ class _SearchPageState extends State<SearchPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(PageTransition(
-                child: const SearchPage(),
-                type: PageTransitionType.fade));
+                child: const SearchPage(), type: PageTransitionType.fade));
           },
           tooltip: 'Search',
           child: const Icon(Icons.search),
