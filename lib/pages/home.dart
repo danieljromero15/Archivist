@@ -1,7 +1,11 @@
 import 'package:archivist/api/igdb_api.dart';
+import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:page_transition/page_transition.dart';
 
+import '../db/database.dart';
+import '../db/use_database.dart';
 import '../nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,37 +27,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //int searchLen = 1;
-  bool called = false;
+  List<GameItem> data = [];
+  List<String> coverUrls = [];
 
-  // placeholders to prevent error
-  /*JsonList searchList = [
-    {
-      'id': 740,
-      'cover': 128403,
-      'first_release_date': 1005782400,
-      'name': 'Halo: Combat Evolved'
-    }
-  ];*/
-  List<String> coversList = [];
-
-  void getGames() {
-    if (!called) {
-      if(coversList.isNotEmpty) coversList = [];
-      IGDBApi().searchGames("Final Fantasy").then((r) {
-        print(r);
-        for (var game in r) {
-          IGDBApi().getCoverUrl(game).then((url) {
-            print('adding ${game['name']}');
-            setState(() {
-              //searchLen = coversList.length;
-              coversList.add(url);
-            });
-          });
-        }
+  void getDBData() async{
+    db.get().then((response) {
+      //print(response);
+      //print(response?[0].cover);
+      IGDBApi().getCoverUrls(response!).then((i) {
+        //print(i);
+        setState(() {
+          //print(response.runtimeType);
+          data = response;
+          coverUrls = i;
+        });
       });
-      called = true;
-    }
+    });
   }
 
   @override
@@ -64,7 +53,10 @@ class _HomePageState extends State<HomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    //IGDBApi().test();
+    //db().test();
+    getDBData();
+
+
 
     getGames();
     
@@ -114,6 +106,32 @@ class _HomePageState extends State<HomePage> {
             ],
           ));
 
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(PageTransition(
+                child: const SearchPage(),
+                type: PageTransitionType.fade));
+          },
+          tooltip: 'Search',
+          child: const Icon(Icons.search),
+        ),
+        //body: Text('hi')
+        body: data.isNotEmpty? GridView.count(
+          crossAxisCount: (data.length).round(),
+          children: List.generate(coverUrls.length, (index) {
+            return Center(
+              //child: Image.network(coversList[index]),
+                child: IconButton(
+                  icon: Image.network(coverUrls[index]),
+                  iconSize: 50,
+                  onPressed: (){
+                    print(data[index]);
+                  },
+                )
+            );
+          }),
+        ) : const Text("") // TODO replace with loading icon?
+    );
   }
 
 }

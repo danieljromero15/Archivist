@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../json_types.dart';
 import 'api_keys.dart';
-
-typedef Json = Map<String, dynamic>;
-typedef JsonList = List<dynamic>;
 
 class IGDBApi {
   static String authToken = '';
@@ -38,7 +36,7 @@ class IGDBApi {
       //print(jsonDecode(response.body));
       return jsonDecode(response.body);
     } else {
-      //print('$uri\n${response.statusCode}\n${response.body}');
+      print('$uri\n${response.statusCode}\n${response.body}');
       throw const FormatException('Unable to reach IGDB');
     }
   }
@@ -72,6 +70,9 @@ class IGDBApi {
   }
 
   Future<String> getCoverUrl(Json gameJson) async{
+    if (authToken.isEmpty) {
+      await login();
+    }
     //print(gameJson);
     int coverId = gameJson['cover'];
     //print(coverId);
@@ -87,12 +88,39 @@ class IGDBApi {
     return thumbUrl;
   }
 
+  Future<List<String>> getCoverUrls(gamesList) async{
+    if (authToken.isEmpty) {
+      await login();
+    }
+    //print(gamesList);
+    print(gamesList.runtimeType);
+    List<dynamic> coverIds = [];
+    try{ // oh my god im so tired of debugging this
+      coverIds = gamesList.map((item) => item['cover'] as int).toList();
+    }catch(e) {
+      coverIds = gamesList.map((item) => item.cover).toList();
+    }
+    String queryString = coverIds.toString().replaceFirst("[", "(").replaceFirst("]", ")");
+
+    JsonList response = await post(
+        '$protocol://$baseUrl/covers',
+        headers: headers,
+        body: 'fields game,url; where id=$queryString;'
+    ) as JsonList;
+
+    //print(response);
+    List<String> coverUrls = response.map((item) => '$protocol:${item['url'].toString().replaceFirst("t_thumb", "t_720p")}').toList();
+    return coverUrls;
+  }
+
   void test() async{
+    print('testing');
     login();
     JsonList gamesList = await searchGames("Halo");
     //print(gamesList);
+    print(getCoverUrls(gamesList));
     //getCoverUrl(gamesList[0]);
-    String coverUrl = await getCoverUrl(gamesList[0]);
+    //String coverUrl = await getCoverUrl(gamesList[0]);
     //print(coverUrl);
 
   }

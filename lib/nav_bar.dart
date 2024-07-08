@@ -3,6 +3,8 @@ import 'package:archivist/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
+import 'db/use_database.dart';
+
 class NavBar {
   AppBar buildAppBar(BuildContext context, String title) {
     return AppBar(
@@ -62,7 +64,21 @@ class NavBar {
                 Navigator.of(context).push(PageTransition(
                     child: const SettingsPage(),
                     type: PageTransitionType.fade));
-              })
+              }),
+          ListTile(
+            leading: const Icon(Icons.close),
+            title: const Text('Clear Database'),
+            onTap: () {
+              db.deleteAll();
+            }
+          ),
+          ListTile(
+            leading: const Icon(Icons.list),
+            title: const Text('List Database in Console'),
+            onTap: () {
+              db.list();
+            }
+          )
         ],
       ),
     );
