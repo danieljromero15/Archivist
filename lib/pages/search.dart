@@ -16,6 +16,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+
   bool called = false;
   JsonList gamesList = [];
   List<String> coversList = [];
@@ -25,10 +26,8 @@ class _SearchPageState extends State<SearchPage> {
       if(coversList.isNotEmpty) coversList = [];
       IGDBApi().searchGames("Final Fantasy").then((r) {
         IGDBApi().getCoverUrls(r).then((urls) {
-          setState(() {
-            gamesList = r;
-            coversList = urls;
-          });
+          gamesList = r;
+          coversList = urls;
         });
       });
       called = true;
@@ -52,20 +51,22 @@ class _SearchPageState extends State<SearchPage> {
           tooltip: 'Search',
           child: const Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
-        body: GridView.count(
-          crossAxisCount: (coversList.length / 2).round(),
-          children: List.generate(coversList.length, (index) {
-            return Center(
-              //child: Image.network(coversList[index]),
-              child: IconButton(
-                icon: Image.network(coversList[index]),
-                iconSize: 50,
-                onPressed: (){
-                  db.insert(gamesList[index]);
-                },
-              )
-            );
-          }),
-        ));
+        body: Expanded(
+          child: GridView.extent(
+            maxCrossAxisExtent: 150,
+            children: List.generate(coversList.length, (index) {
+              return Center(
+                //child: Image.network(coversList[index]),
+                  child: IconButton(
+                    icon: Image.network(coversList[index]),
+                    iconSize: 50,
+                    onPressed: (){
+                      db.insert(gamesList[index]);
+                    },
+                  )
+              );
+            }),
+          ))
+        );
   }
 }

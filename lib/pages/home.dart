@@ -7,6 +7,7 @@ import 'package:page_transition/page_transition.dart';
 import '../db/database.dart';
 import '../db/use_database.dart';
 import '../nav_bar.dart';
+import '../json_types.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.title = 'Archivist Home Page'});
@@ -55,10 +56,6 @@ class _HomePageState extends State<HomePage> {
     // than having to individually change instances of widgets.
     //db().test();
     getDBData();
-
-
-
-    getGames();
     
     return Scaffold(
 
@@ -92,46 +89,19 @@ class _HomePageState extends State<HomePage> {
                 
                 
                 maxCrossAxisExtent: 150,
-                children: List.generate(coversList.length, (index) {
+                children: List.generate(coverUrls.length, (index) {
                   return Center(
                     child: ElevatedButton(style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.transparent,
                       backgroundColor: Colors.transparent,
                       disabledForegroundColor: Colors.transparent,
                       disabledBackgroundColor: Colors.transparent,
-                    ), onPressed: null, child: Image.network(coversList[index]), )
+                    ), onPressed: null, child: Image.network(coverUrls[index]), )
                   );
                 }),
               ),)
             ],
           ));
-
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(PageTransition(
-                child: const SearchPage(),
-                type: PageTransitionType.fade));
-          },
-          tooltip: 'Search',
-          child: const Icon(Icons.search),
-        ),
-        //body: Text('hi')
-        body: data.isNotEmpty? GridView.count(
-          crossAxisCount: (data.length).round(),
-          children: List.generate(coverUrls.length, (index) {
-            return Center(
-              //child: Image.network(coversList[index]),
-                child: IconButton(
-                  icon: Image.network(coverUrls[index]),
-                  iconSize: 50,
-                  onPressed: (){
-                    print(data[index]);
-                  },
-                )
-            );
-          }),
-        ) : const Text("") // TODO replace with loading icon?
-    );
   }
 
 }

@@ -1,4 +1,6 @@
+import 'package:archivist/pages/description.dart';
 import 'package:archivist/pages/home.dart';
+import 'package:archivist/pages/search.dart';
 import 'package:archivist/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -54,6 +56,24 @@ class NavBar {
                       type: PageTransitionType
                           .fade) // not the biggest fan of this animation but it's okay enough
                   );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.search),
+            title: const Text('Search'),
+            onTap: () {
+              Navigator.of(context).push(PageTransition(
+                  child: const SearchPage(), type: PageTransitionType.fade)
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.abc),
+            title: const Text('Dscription Temp'),
+            onTap: () {
+              Navigator.of(context).push(PageTransition(
+                  child: const DescriptionPage(), type: PageTransitionType.fade)
+              );
             },
           ),
           ListTile(
