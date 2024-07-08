@@ -88,7 +88,11 @@ class _DescriptionPageState extends State<DescriptionPage> {
                           Expanded(
                             //TODO Replace temp summary with summary of game
                             child: Text(
-                                'The Literature Club is full of cute girls! Will you write the way into their heart? This game is not suitable for children or those who are easily disturbed.'),
+                                'The Literature Club is full of cute girls! Will you write the way into their heart? This game is not suitable for children or those who are easily disturbed.'
+                          //  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pretium mollis gravida. Nulla ac odio vel lacus maximus aliquam gravida at lacus. Donec ac gravida augue. Phasellus vitae tortor tristique, pharetra nisi in, faucibus urna. Duis ornare orci est, vel porta nunc accumsan id. In fermentum erat sed ipsum euismod, sit amet tincidunt libero eleifend. Sed lorem nisi, maximus et lorem quis, egestas placerat nisl. Nulla leo lacus, rutrum a dignissim eget, ultricies laoreet ipsum. Duis non urna metus. Duis vitae pharetra ex, eget laoreet odio. Nam pretium at lectus id varius. Nullam laoreet purus sed erat pretium, sit amet tincidunt tellus consectetur. Donec et hendrerit urna. Mauris vitae tellus a erat tristique ultrices id eget ex.'
+
+
+                            ),
                           ),
                           Column(
                             children: [
