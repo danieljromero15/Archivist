@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   List<GameItem> data = [];
   List<String> coverUrls = [];
 
-  void getDBData() async{
+  void getDBData() async {
     db.get().then((response) {
       //print(response);
       //print(response?[0].cover);
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     // than having to individually change instances of widgets.
     //db().test();
     getDBData();
-    
+
     return Scaffold(
 
         appBar: NavBar().buildAppBar(context, widget.title),
@@ -103,5 +103,4 @@ class _HomePageState extends State<HomePage> {
             ],
           ));
   }
-
 }
