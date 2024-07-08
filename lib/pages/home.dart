@@ -1,5 +1,6 @@
 import 'package:archivist/api/igdb_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../nav_bar.dart';
 
@@ -66,21 +67,53 @@ class _HomePageState extends State<HomePage> {
     //IGDBApi().test();
 
     getGames();
+    
     return Scaffold(
+
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          tooltip: 'Search',
-          child: const Icon(Icons.search),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-        body: GridView.count(
-          crossAxisCount: (coversList.length / 5).round(),
-          children: List.generate(coversList.length, (index) {
-            return Center(
-              child: Image.network(coversList[index]),
-            );
-          }),
-        ));
+        body:
+          Column(
+            children: [
+              const SizedBox(height: 10,),
+              const Wrap(
+                spacing: 10.0,
+                alignment: WrapAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                      onPressed: null, child: Text('All')
+                  ),
+                  ElevatedButton(onPressed: null, child: Text('Planning')
+                  ),
+                  ElevatedButton(onPressed: null, child: Text('Playing')
+                  ),
+                  ElevatedButton(onPressed: null, child: Text('Completed')
+                  ),
+                  ElevatedButton(onPressed: null, child: Text('100%')
+                  ),
+                ],
+              ),
+              const SizedBox(height: 50,),
+              const Text('Planning'),
+              const SizedBox(height: 10,),
+              Expanded(child: GridView.extent(
+                
+                
+                maxCrossAxisExtent: 150,
+                children: List.generate(coversList.length, (index) {
+                  return Center(
+                    child: ElevatedButton(style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      disabledForegroundColor: Colors.transparent,
+                      disabledBackgroundColor: Colors.transparent,
+                    ), onPressed: null, child: Image.network(coversList[index]), )
+                  );
+                }),
+              ),)
+            ],
+          ));
+
   }
+
 }
