@@ -16,7 +16,7 @@ class db{
 
     await database?.into(database!.gameItems).insert(GameItemsCompanion.insert(
       name: game['name'],
-      releaseDate: Value(DateTime.fromMillisecondsSinceEpoch(game['first_release_date'])),
+      releaseDate: Value(DateTime.fromMillisecondsSinceEpoch(game['first_release_date'] * 1000)),
       cover: Value(game['cover']),
       summary: Value(game['summary']),
       status: const Value(0),
