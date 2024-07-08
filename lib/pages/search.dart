@@ -42,31 +42,27 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(PageTransition(
-                child: const SearchPage(),
-                type: PageTransitionType.fade));
-          },
-          tooltip: 'Search',
-          child: const Icon(Icons.search),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-        body: Expanded(
-          child: GridView.extent(
-            maxCrossAxisExtent: 150,
-            children: List.generate(coversList.length, (index) {
-              return Center(
-                //child: Image.network(coversList[index]),
-                  child: IconButton(
-                    icon: Image.network(coversList[index]),
-                    iconSize: 50,
-                    onPressed: (){
-                      db.insert(gamesList[index]);
-                    },
-                  )
-              );
-            }),
-          ))
+         // This trailing comma makes auto-formatting nicer for build methods.
+        body: Column(
+          children: [
+            Expanded(
+              child: GridView.extent(
+                maxCrossAxisExtent: 150,
+                children: List.generate(coversList.length, (index) {
+                  return Center(
+                    //child: Image.network(coversList[index]),
+                      child: IconButton(
+                        icon: Image.network(coversList[index]),
+                        iconSize: 50,
+                        onPressed: (){
+                          db.insert(gamesList[index]);
+                        },
+                      )
+                  );
+                }),
+              )),
+          ],
+        )
         );
   }
 }
