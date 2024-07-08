@@ -1,7 +1,6 @@
 import 'package:archivist/api/igdb_api.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../db/database.dart';
