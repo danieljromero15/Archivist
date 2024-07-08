@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   void getGames() {
     if (!called) {
       if(coversList.isNotEmpty) coversList = [];
-      IGDBApi().searchGames("Halo").then((r) {
+      IGDBApi().searchGames("Final Fantasy").then((r) {
         print(r);
         for (var game in r) {
           IGDBApi().getCoverUrl(game).then((url) {
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
           child: const Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
         body: GridView.count(
-          crossAxisCount: coversList.length,
+          crossAxisCount: (coversList.length / 5).round(),
           children: List.generate(coversList.length, (index) {
             return Center(
               child: Image.network(coversList[index]),

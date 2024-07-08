@@ -65,7 +65,8 @@ class IGDBApi {
 
     JsonList response = await post('$protocol://$baseUrl/games',
         headers: headers,
-        body: 'search "$name"; fields name, cover, first_release_date;') as JsonList;
+        // anything here needs to probably be reflected
+        body: 'search "$name"; fields name, cover, first_release_date; limit 25;') as JsonList;
     prevResponse = response;
     return response;
   }
