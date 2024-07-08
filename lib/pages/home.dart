@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   List<GameItem> data = [];
   List<String> coverUrls = [];
 
-  void getDBData() async{
+  void getDBData() async {
     db.get().then((response) {
       //print(response);
       //print(response?[0].cover);
@@ -56,82 +56,60 @@ class _HomePageState extends State<HomePage> {
     //db().test();
     getDBData();
 
-
-
-    getGames();
-    
     return Scaffold(
-
-        appBar: NavBar().buildAppBar(context, widget.title),
-        drawer: NavBar().buildDrawer(context),
-        body:
-          Column(
+      appBar: NavBar().buildAppBar(context, widget.title),
+      drawer: NavBar().buildDrawer(context),
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          const Wrap(
+            spacing: 10.0,
+            alignment: WrapAlignment.spaceEvenly,
             children: [
-              const SizedBox(height: 10,),
-              const Wrap(
-                spacing: 10.0,
-                alignment: WrapAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                      onPressed: null, child: Text('All')
-                  ),
-                  ElevatedButton(onPressed: null, child: Text('Planning')
-                  ),
-                  ElevatedButton(onPressed: null, child: Text('Playing')
-                  ),
-                  ElevatedButton(onPressed: null, child: Text('Completed')
-                  ),
-                  ElevatedButton(onPressed: null, child: Text('100%')
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50,),
-              const Text('Planning'),
-              const SizedBox(height: 10,),
-              Expanded(child: GridView.extent(
-                
-                
-                maxCrossAxisExtent: 150,
-                children: List.generate(coversList.length, (index) {
-                  return Center(
-                    child: ElevatedButton(style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      disabledForegroundColor: Colors.transparent,
-                      disabledBackgroundColor: Colors.transparent,
-                    ), onPressed: null, child: Image.network(coversList[index]), )
-                  );
-                }),
-              ),)
+              ElevatedButton(onPressed: null, child: Text('All')),
+              ElevatedButton(onPressed: null, child: Text('Planning')),
+              ElevatedButton(onPressed: null, child: Text('Playing')),
+              ElevatedButton(onPressed: null, child: Text('Completed')),
+              ElevatedButton(onPressed: null, child: Text('100%')),
             ],
-          ));
-
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(PageTransition(
-                child: const SearchPage(),
-                type: PageTransitionType.fade));
-          },
-          tooltip: 'Search',
-          child: const Icon(Icons.search),
-        ),
-        //body: Text('hi')
-        body: data.isNotEmpty? GridView.count(
-          crossAxisCount: (data.length).round(),
-          children: List.generate(coverUrls.length, (index) {
-            return Center(
-              //child: Image.network(coversList[index]),
-                child: IconButton(
-                  icon: Image.network(coverUrls[index]),
-                  iconSize: 50,
-                  onPressed: (){
-                    print(data[index]);
-                  },
-                )
-            );
-          }),
-        ) : const Text("") // TODO replace with loading icon?
+          ),
+          const SizedBox(
+            height: 50,
+          ),
+          const Text('Planning'),
+          const SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: GridView.extent(
+              maxCrossAxisExtent: 150,
+              children: List.generate(coverUrls.length, (index) {
+                return Center(
+                    child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.transparent,
+                    backgroundColor: Colors.transparent,
+                    disabledForegroundColor: Colors.transparent,
+                    disabledBackgroundColor: Colors.transparent,
+                  ),
+                  onPressed: null,
+                  child: Image.network(coverUrls[index]),
+                ));
+              }),
+            ),
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(PageTransition(
+              child: const SearchPage(), type: PageTransitionType.fade));
+        },
+        tooltip: 'Search',
+        child: const Icon(Icons.search),
+      ),
     );
   }
-
 }
