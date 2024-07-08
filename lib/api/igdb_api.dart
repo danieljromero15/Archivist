@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -14,25 +13,20 @@ class IGDBApi {
   final protocol = 'https';
   final baseUrl = 'api.igdb.com/v4';
 
-  Future<Json> get(String uri) async {
-    final response = await http.post(Uri.parse(uri));
+  Future<Object> get(String uri,
+      {Map<String, String>? headers}) async {
+    final response =
+    await http.get(Uri.parse(uri), headers: headers);
     if (response.statusCode == 200) {
-      return jsonDecode(response.body) as Json;
+      //print(jsonDecode(response.body));
+      return jsonDecode(response.body);
     } else {
+      //print('${uri}\n${response.statusCode}');
       throw const FormatException('Unable to reach IGDB');
     }
   }
 
-  Future<Json> post(String uri) async {
-    final response = await http.post(Uri.parse(uri));
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body) as Json;
-    } else {
-      throw const FormatException('Unable to reach IGDB');
-    }
-  }
-
-  Future<Object> post2(String uri,
+  Future<Object> post(String uri,
       {Map<String, String>? headers, String body = ''}) async {
     final response =
         await http.post(Uri.parse(uri), headers: headers, body: body);
@@ -46,7 +40,7 @@ class IGDBApi {
   }
 
   Future<void> login() async {
-    Json response = await post2(
+    Json response = await post(
         'https://id.twitch.tv/oauth2/token?client_id=$igdbApiKey&client_secret=$igdbApiSecret&grant_type=client_credentials') as Json;
     authToken = response['access_token'];
   }
@@ -55,12 +49,12 @@ class IGDBApi {
     if (authToken.isEmpty) {
       await login();
     }
-    JsonList response = await post2('$protocol://$baseUrl/games',
+    JsonList response = await post('$protocol://$baseUrl/games',
         headers: {
           "Client-ID": igdbApiKey,
           "Authorization": 'Bearer $authToken',
         },
-        body: 'search "${name}"; fields name, cover, first_release_date;') as JsonList;
+        body: 'search "$name"; fields name, cover, first_release_date;') as JsonList;
     return response;
   }
 }
