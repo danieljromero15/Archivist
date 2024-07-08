@@ -1,3 +1,4 @@
+import 'package:archivist/api/api_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -25,15 +26,21 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Section 1'),
               tiles: [
                 SettingsTile.navigation(
-                  leading: const Icon(Icons.language),
-                  title: const Text('Language'),
-                  value: const Text('English'),
+                  leading: const Icon(Icons.key),
+                  title: const Text('IGDB API Key'),
+                  value: const Text(igdbApiKey),
+                ),
+                SettingsTile.navigation(
+                  leading: const Icon(Icons.lock),
+                  title: const Text('IGDB API Secret'),
+                  value: const Text(igdbApiSecret),
                 ),
                 SettingsTile.switchTile(
                   onToggle: (value) {},
                   initialValue: true,
                   leading: const Icon(Icons.format_paint),
                   title: const Text('Enable custom theme'),
+                  enabled: false,
                 ),
                 SettingsTile(
                   title: const Text('I have no idea what I\'m doing'),

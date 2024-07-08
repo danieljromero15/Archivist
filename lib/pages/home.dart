@@ -1,3 +1,4 @@
+import 'package:archivist/api/igdb_api.dart';
 import 'package:flutter/material.dart';
 
 import '../nav_bar.dart';
@@ -21,6 +22,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int searchLen = 1;
+  var searchList = [];
+
+  void search() {
+    IGDBApi().searchGames("Halo").then((r) {
+      setState(() {
+        searchLen = r.length;
+        searchList = r;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -29,6 +42,7 @@ class _HomePageState extends State<HomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    search();
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
@@ -38,11 +52,11 @@ class _HomePageState extends State<HomePage> {
           child: const Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
         body: GridView.count(
-          crossAxisCount: 8,
-          children: List.generate(5, (index) {
+          crossAxisCount: searchLen,
+          children: List.generate(searchLen, (index) {
             return Center(
               child: Text(
-                'Item $index',
+                '${searchList[index]['name']}',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             );
