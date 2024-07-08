@@ -18,6 +18,7 @@ class db{
       name: game['name'],
       releaseDate: Value(DateTime.fromMillisecondsSinceEpoch(game['first_release_date'])),
       cover: Value(game['cover']),
+      summary: Value(game['summary']),
       status: const Value(0),
     ));
     list();

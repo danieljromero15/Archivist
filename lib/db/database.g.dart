@@ -213,6 +213,12 @@ class $GameItemsTable extends GameItems
   late final GeneratedColumn<int> cover = GeneratedColumn<int>(
       'cover', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _summaryMeta =
+      const VerificationMeta('summary');
+  @override
+  late final GeneratedColumn<String> summary = GeneratedColumn<String>(
+      'summary', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<int> status = GeneratedColumn<int>(
@@ -222,7 +228,8 @@ class $GameItemsTable extends GameItems
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES game_category (id)'));
   @override
-  List<GeneratedColumn> get $columns => [id, name, releaseDate, cover, status];
+  List<GeneratedColumn> get $columns =>
+      [id, name, releaseDate, cover, summary, status];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -252,6 +259,10 @@ class $GameItemsTable extends GameItems
       context.handle(
           _coverMeta, cover.isAcceptableOrUnknown(data['cover']!, _coverMeta));
     }
+    if (data.containsKey('summary')) {
+      context.handle(_summaryMeta,
+          summary.isAcceptableOrUnknown(data['summary']!, _summaryMeta));
+    }
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
           status.isAcceptableOrUnknown(data['status']!, _statusMeta));
@@ -273,6 +284,8 @@ class $GameItemsTable extends GameItems
           .read(DriftSqlType.dateTime, data['${effectivePrefix}release_date']),
       cover: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}cover']),
+      summary: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}summary']),
       status: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status']),
     );
@@ -289,12 +302,14 @@ class GameItem extends DataClass implements Insertable<GameItem> {
   final String name;
   final DateTime? releaseDate;
   final int? cover;
+  final String? summary;
   final int? status;
   const GameItem(
       {required this.id,
       required this.name,
       this.releaseDate,
       this.cover,
+      this.summary,
       this.status});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -306,6 +321,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
     }
     if (!nullToAbsent || cover != null) {
       map['cover'] = Variable<int>(cover);
+    }
+    if (!nullToAbsent || summary != null) {
+      map['summary'] = Variable<String>(summary);
     }
     if (!nullToAbsent || status != null) {
       map['status'] = Variable<int>(status);
@@ -322,6 +340,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           : Value(releaseDate),
       cover:
           cover == null && nullToAbsent ? const Value.absent() : Value(cover),
+      summary: summary == null && nullToAbsent
+          ? const Value.absent()
+          : Value(summary),
       status:
           status == null && nullToAbsent ? const Value.absent() : Value(status),
     );
@@ -335,6 +356,7 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       name: serializer.fromJson<String>(json['name']),
       releaseDate: serializer.fromJson<DateTime?>(json['releaseDate']),
       cover: serializer.fromJson<int?>(json['cover']),
+      summary: serializer.fromJson<String?>(json['summary']),
       status: serializer.fromJson<int?>(json['status']),
     );
   }
@@ -346,6 +368,7 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       'name': serializer.toJson<String>(name),
       'releaseDate': serializer.toJson<DateTime?>(releaseDate),
       'cover': serializer.toJson<int?>(cover),
+      'summary': serializer.toJson<String?>(summary),
       'status': serializer.toJson<int?>(status),
     };
   }
@@ -355,12 +378,14 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           String? name,
           Value<DateTime?> releaseDate = const Value.absent(),
           Value<int?> cover = const Value.absent(),
+          Value<String?> summary = const Value.absent(),
           Value<int?> status = const Value.absent()}) =>
       GameItem(
         id: id ?? this.id,
         name: name ?? this.name,
         releaseDate: releaseDate.present ? releaseDate.value : this.releaseDate,
         cover: cover.present ? cover.value : this.cover,
+        summary: summary.present ? summary.value : this.summary,
         status: status.present ? status.value : this.status,
       );
   @override
@@ -370,13 +395,15 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           ..write('name: $name, ')
           ..write('releaseDate: $releaseDate, ')
           ..write('cover: $cover, ')
+          ..write('summary: $summary, ')
           ..write('status: $status')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, releaseDate, cover, status);
+  int get hashCode =>
+      Object.hash(id, name, releaseDate, cover, summary, status);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -385,6 +412,7 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           other.name == this.name &&
           other.releaseDate == this.releaseDate &&
           other.cover == this.cover &&
+          other.summary == this.summary &&
           other.status == this.status);
 }
 
@@ -393,12 +421,14 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
   final Value<String> name;
   final Value<DateTime?> releaseDate;
   final Value<int?> cover;
+  final Value<String?> summary;
   final Value<int?> status;
   const GameItemsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.releaseDate = const Value.absent(),
     this.cover = const Value.absent(),
+    this.summary = const Value.absent(),
     this.status = const Value.absent(),
   });
   GameItemsCompanion.insert({
@@ -406,6 +436,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     required String name,
     this.releaseDate = const Value.absent(),
     this.cover = const Value.absent(),
+    this.summary = const Value.absent(),
     this.status = const Value.absent(),
   }) : name = Value(name);
   static Insertable<GameItem> custom({
@@ -413,6 +444,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     Expression<String>? name,
     Expression<DateTime>? releaseDate,
     Expression<int>? cover,
+    Expression<String>? summary,
     Expression<int>? status,
   }) {
     return RawValuesInsertable({
@@ -420,6 +452,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
       if (name != null) 'name': name,
       if (releaseDate != null) 'release_date': releaseDate,
       if (cover != null) 'cover': cover,
+      if (summary != null) 'summary': summary,
       if (status != null) 'status': status,
     });
   }
@@ -429,12 +462,14 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
       Value<String>? name,
       Value<DateTime?>? releaseDate,
       Value<int?>? cover,
+      Value<String?>? summary,
       Value<int?>? status}) {
     return GameItemsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       releaseDate: releaseDate ?? this.releaseDate,
       cover: cover ?? this.cover,
+      summary: summary ?? this.summary,
       status: status ?? this.status,
     );
   }
@@ -454,6 +489,9 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     if (cover.present) {
       map['cover'] = Variable<int>(cover.value);
     }
+    if (summary.present) {
+      map['summary'] = Variable<String>(summary.value);
+    }
     if (status.present) {
       map['status'] = Variable<int>(status.value);
     }
@@ -467,6 +505,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
           ..write('name: $name, ')
           ..write('releaseDate: $releaseDate, ')
           ..write('cover: $cover, ')
+          ..write('summary: $summary, ')
           ..write('status: $status')
           ..write(')'))
         .toString();
@@ -592,6 +631,7 @@ typedef $$GameItemsTableInsertCompanionBuilder = GameItemsCompanion Function({
   required String name,
   Value<DateTime?> releaseDate,
   Value<int?> cover,
+  Value<String?> summary,
   Value<int?> status,
 });
 typedef $$GameItemsTableUpdateCompanionBuilder = GameItemsCompanion Function({
@@ -599,6 +639,7 @@ typedef $$GameItemsTableUpdateCompanionBuilder = GameItemsCompanion Function({
   Value<String> name,
   Value<DateTime?> releaseDate,
   Value<int?> cover,
+  Value<String?> summary,
   Value<int?> status,
 });
 
@@ -626,6 +667,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<DateTime?> releaseDate = const Value.absent(),
             Value<int?> cover = const Value.absent(),
+            Value<String?> summary = const Value.absent(),
             Value<int?> status = const Value.absent(),
           }) =>
               GameItemsCompanion(
@@ -633,6 +675,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             name: name,
             releaseDate: releaseDate,
             cover: cover,
+            summary: summary,
             status: status,
           ),
           getInsertCompanionBuilder: ({
@@ -640,6 +683,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             required String name,
             Value<DateTime?> releaseDate = const Value.absent(),
             Value<int?> cover = const Value.absent(),
+            Value<String?> summary = const Value.absent(),
             Value<int?> status = const Value.absent(),
           }) =>
               GameItemsCompanion.insert(
@@ -647,6 +691,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             name: name,
             releaseDate: releaseDate,
             cover: cover,
+            summary: summary,
             status: status,
           ),
         ));
@@ -687,6 +732,11 @@ class $$GameItemsTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<String> get summary => $state.composableBuilder(
+      column: $state.table.summary,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   $$GameCategoryTableFilterComposer get status {
     final $$GameCategoryTableFilterComposer composer = $state.composerBuilder(
         composer: this,
@@ -720,6 +770,11 @@ class $$GameItemsTableOrderingComposer
 
   ColumnOrderings<int> get cover => $state.composableBuilder(
       column: $state.table.cover,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get summary => $state.composableBuilder(
+      column: $state.table.summary,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
