@@ -63,8 +63,7 @@ class NavBar {
             title: const Text('Search'),
             onTap: () {
               Navigator.of(context).push(PageTransition(
-                  child: const SearchPage(), type: PageTransitionType.fade)
-              );
+                  child: const SearchPage(), type: PageTransitionType.fade));
             },
           ),
           ListTile(
@@ -72,8 +71,8 @@ class NavBar {
             title: const Text('Dscription Temp'),
             onTap: () {
               Navigator.of(context).push(PageTransition(
-                  child: const DescriptionPage(), type: PageTransitionType.fade)
-              );
+                  child: const DescriptionPage(),
+                  type: PageTransitionType.fade));
             },
           ),
           ListTile(
@@ -86,19 +85,17 @@ class NavBar {
                     type: PageTransitionType.fade));
               }),
           ListTile(
-            leading: const Icon(Icons.close),
-            title: const Text('Clear Database'),
-            onTap: () {
-              db.deleteAll();
-            }
-          ),
+              leading: const Icon(Icons.close),
+              title: const Text('Clear Database'),
+              onTap: () {
+                db.deleteAll();
+              }),
           ListTile(
-            leading: const Icon(Icons.list),
-            title: const Text('List Database in Console'),
-            onTap: () {
-              db.list();
-            }
-          )
+              leading: const Icon(Icons.list),
+              title: const Text('List Database in Console'),
+              onTap: () {
+                db.list();
+              })
         ],
       ),
     );

@@ -16,18 +16,19 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-
   bool called = false;
   JsonList gamesList = [];
   List<String> coversList = [];
 
   void getGames() {
     if (!called) {
-      if(coversList.isNotEmpty) coversList = [];
+      if (coversList.isNotEmpty) coversList = [];
       IGDBApi().searchGames("Final Fantasy").then((r) {
         IGDBApi().getCoverUrls(r).then((urls) {
-          gamesList = r;
-          coversList = urls;
+          setState(() {
+            gamesList = r;
+            coversList = urls;
+          });
         });
       });
       called = true;
@@ -42,27 +43,33 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
-         // This trailing comma makes auto-formatting nicer for build methods.
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(PageTransition(
+                child: const SearchPage(),
+                type: PageTransitionType.fade));
+          },
+          tooltip: 'Search',
+          child: const Icon(Icons.search),
+        ),
         body: Column(
           children: [
             Expanded(
-              child: GridView.extent(
-                maxCrossAxisExtent: 150,
-                children: List.generate(coversList.length, (index) {
-                  return Center(
+                child: GridView.extent(
+              maxCrossAxisExtent: 150,
+              children: List.generate(coversList.length, (index) {
+                return Center(
                     //child: Image.network(coversList[index]),
-                      child: IconButton(
-                        icon: Image.network(coversList[index]),
-                        iconSize: 50,
-                        onPressed: (){
-                          db.insert(gamesList[index]);
-                        },
-                      )
-                  );
-                }),
-              )),
+                    child: IconButton(
+                  icon: Image.network(coversList[index]),
+                  iconSize: 50,
+                  onPressed: () {
+                    db.insert(gamesList[index]);
+                  },
+                ));
+              }),
+            )),
           ],
-        )
-        );
+        ));
   }
 }
