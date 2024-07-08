@@ -1,11 +1,10 @@
-import 'package:archivist/api/igdb_api.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../db/database.dart';
 import '../db/use_database.dart';
+import '../main.dart';
 import '../nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     db.get().then((response) {
       //print(response);
       //print(response?[0].cover);
-      IGDBApi().getCoverUrls(response!).then((i) {
+      gamesApi?.getCoverUrls(response!).then((i) {
         //print(i);
         setState(() {
           //print(response.runtimeType);

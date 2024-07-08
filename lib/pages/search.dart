@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../api/igdb_api.dart';
 import '../db/use_database.dart';
 import '../json_types.dart';
+import '../main.dart';
 import '../nav_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -23,8 +23,8 @@ class _SearchPageState extends State<SearchPage> {
   void getGames() {
     if (!called) {
       if(coversList.isNotEmpty) coversList = [];
-      IGDBApi().searchGames("Final Fantasy").then((r) {
-        IGDBApi().getCoverUrls(r).then((urls) {
+      gamesApi?.searchGames("Final Fantasy").then((r) {
+        gamesApi?.getCoverUrls(r).then((urls) {
           setState(() {
             gamesList = r;
             coversList = urls;
@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    //IGDBApi().test();
+    //gamesApi.test();
     getGames();
 
     return Scaffold(

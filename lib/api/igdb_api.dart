@@ -17,6 +17,10 @@ class IGDBApi {
   final protocol = 'https';
   final baseUrl = 'api.igdb.com/v4';
 
+  IGDBApi() {
+    login();
+  }
+
   Future<Object> get(String uri, {Map<String, String>? headers}) async {
     final response = await http.get(Uri.parse(uri), headers: headers);
     if (response.statusCode == 200) {
