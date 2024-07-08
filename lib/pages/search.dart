@@ -51,21 +51,25 @@ class _SearchPageState extends State<SearchPage> {
           },
           tooltip: 'Search',
           child: const Icon(Icons.search),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-        body: GridView.count(
-          crossAxisCount: (coversList.length / 2).round(),
-          children: List.generate(coversList.length, (index) {
-            return Center(
-              //child: Image.network(coversList[index]),
-              child: IconButton(
-                icon: Image.network(coversList[index]),
-                iconSize: 50,
-                onPressed: (){
-                  db.insert(gamesList[index]);
-                },
-              )
-            );
-          }),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+                child: GridView.extent(
+              maxCrossAxisExtent: 150,
+              children: List.generate(coversList.length, (index) {
+                return Center(
+                    //child: Image.network(coversList[index]),
+                    child: IconButton(
+                  icon: Image.network(coversList[index]),
+                  iconSize: 50,
+                  onPressed: () {
+                    db.insert(gamesList[index]);
+                  },
+                ));
+              }),
+            )),
+          ],
         ));
   }
 }
