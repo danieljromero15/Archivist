@@ -22,16 +22,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int searchLen = 1;
-  List<dynamic> searchList = [{'id': 740, 'cover': 128403, 'first_release_date': 1005782400, 'name': 'Halo: Combat Evolved'}];
+  //int searchLen = 1;
+  bool called = false;
 
-  void search() {
-    IGDBApi().searchGames("Halo").then((r) {
-      setState(() {
-        searchLen = r.length;
-        searchList = r;
+  // placeholders to prevent error
+  /*JsonList searchList = [
+    {
+      'id': 740,
+      'cover': 128403,
+      'first_release_date': 1005782400,
+      'name': 'Halo: Combat Evolved'
+    }
+  ];*/
+  List<String> coversList = [];
+
+  void getGames() {
+    if (!called) {
+      if(coversList.isNotEmpty) coversList = [];
+      IGDBApi().searchGames("Halo").then((r) {
+        print(r);
+        for (var game in r) {
+          IGDBApi().getCoverUrl(game).then((url) {
+            print('adding ${game['name']}');
+            setState(() {
+              //searchLen = coversList.length;
+              coversList.add(url);
+            });
+          });
+        }
       });
-    });
+      called = true;
+    }
   }
 
   @override
@@ -44,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     // than having to individually change instances of widgets.
     //IGDBApi().test();
 
-    search();
+    getGames();
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
         drawer: NavBar().buildDrawer(context),
@@ -54,13 +75,10 @@ class _HomePageState extends State<HomePage> {
           child: const Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
         body: GridView.count(
-          crossAxisCount: searchLen,
-          children: List.generate(searchLen, (index) {
+          crossAxisCount: coversList.length,
+          children: List.generate(coversList.length, (index) {
             return Center(
-              child: Text(
-                '${searchList[index]['name']}',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              child: Image.network(coversList[index]),
             );
           }),
         ));

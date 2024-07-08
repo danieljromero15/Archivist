@@ -11,6 +11,9 @@ class IGDBApi {
   static String authToken = '';
   static Map<String, String>? headers = {};
 
+  static String prevName = '';
+  static JsonList prevResponse = [{'hi': "hi"}];
+
   final protocol = 'https';
   final baseUrl = 'api.igdb.com/v4';
 
@@ -35,7 +38,7 @@ class IGDBApi {
       //print(jsonDecode(response.body));
       return jsonDecode(response.body);
     } else {
-      print('${uri}\n${response.statusCode}\n${response.body}');
+      //print('$uri\n${response.statusCode}\n${response.body}');
       throw const FormatException('Unable to reach IGDB');
     }
   }
@@ -54,9 +57,16 @@ class IGDBApi {
     if (authToken.isEmpty) {
       await login();
     }
+    if(name == prevName){
+      return prevResponse;
+    }else{
+      prevName = name;
+    }
+
     JsonList response = await post('$protocol://$baseUrl/games',
         headers: headers,
         body: 'search "$name"; fields name, cover, first_release_date;') as JsonList;
+    prevResponse = response;
     return response;
   }
 
@@ -71,7 +81,7 @@ class IGDBApi {
       body: 'fields game,url; where id=$coverId;'
     ) as JsonList;
     //print(response);
-    String thumbUrl = '${protocol}:${response[0]["url"]}';
+    String thumbUrl = '$protocol:${response[0]["url"]}';
     thumbUrl = thumbUrl.replaceFirst("t_thumb", "t_720p");
     return thumbUrl;
   }
@@ -82,7 +92,7 @@ class IGDBApi {
     //print(gamesList);
     //getCoverUrl(gamesList[0]);
     String coverUrl = await getCoverUrl(gamesList[0]);
-    print(coverUrl);
+    //print(coverUrl);
 
   }
 }
