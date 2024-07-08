@@ -23,7 +23,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int searchLen = 1;
-  var searchList = [];
+  List<dynamic> searchList = [{'id': 740, 'cover': 128403, 'first_release_date': 1005782400, 'name': 'Halo: Combat Evolved'}];
 
   void search() {
     IGDBApi().searchGames("Halo").then((r) {
