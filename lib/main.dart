@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'db/database.dart';
 import 'pages/home.dart';
 
+GameDB? database;
+
 void main() {
+  database = GameDB();
   runApp(const MyApp());
 }
 
