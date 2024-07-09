@@ -35,14 +35,16 @@ class _HomePageState extends State<HomePage> {
       db.get().then((response) {
         //print(response);
         //print(response?[0].cover);
-        gamesApi?.getCoverUrls(response!).then((i) {
-          //print(i);
-          setState(() {
-            //print(response.runtimeType);
-            data = response;
-            coverUrls = i!;
+        if (response!.isNotEmpty) {
+          gamesApi?.getCoverUrls(response).then((i) {
+            //print(i);
+            setState(() {
+              //print(response.runtimeType);
+              data = response;
+              coverUrls = i!;
+            });
           });
-        });
+        }
       });
       called = true;
     }
