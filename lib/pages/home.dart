@@ -26,22 +26,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool called = false;
   List<GameItem> data = [];
-  List<String> coverUrls = [];
+  Map<int, String> coverUrls = <int, String>{};
 
   void getDBData() async {
-    db.get().then((response) {
-      //print(response);
-      //print(response?[0].cover);
-      gamesApi?.getCoverUrls(response!).then((i) {
-        //print(i);
-        setState(() {
-          //print(response.runtimeType);
-          data = response;
-          coverUrls = i;
+    if (!called) {
+      db.get().then((response) {
+        //print(response);
+        //print(response?[0].cover);
+        gamesApi?.getCoverUrls(response!).then((i) {
+          //print(i);
+          setState(() {
+            //print(response.runtimeType);
+            data = response;
+            coverUrls = i!;
+          });
         });
       });
-    });
+      called = true;
+    }
   }
 
   @override
@@ -94,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                     disabledBackgroundColor: Colors.transparent,
                   ),
                   onPressed: null,
-                  child: Image.network(coverUrls[index]),
+                  child: Image.network(coverUrls[data[index].igdbID]!),
                 ));
               }),
             ),

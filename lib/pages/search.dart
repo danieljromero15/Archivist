@@ -18,17 +18,18 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   bool called = false;
   JsonList gamesList = [];
-  List<String> coversList = [];
+  Map<int, String> coversList = <int, String>{};
 
   void getGames() {
     if (!called) {
-      if (coversList.isNotEmpty) coversList = [];
-      gamesApi?.searchGames("Final Fantasy").then((r) {
+      if (coversList.isNotEmpty) coversList.clear();
+      gamesApi?.searchGames("Final Fantasy", limit: 25).then((r) {
         gamesApi?.getCoverUrls(r).then((urls) {
           setState(() {
             gamesList = r;
-            coversList = urls;
+            coversList = urls!;
           });
+          //print(gamesList);
         });
       });
       called = true;
@@ -60,9 +61,10 @@ class _SearchPageState extends State<SearchPage> {
                 return Center(
                     //child: Image.network(coversList[index]),
                     child: IconButton(
-                  icon: Image.network(coversList[index]),
+                  icon: Image.network(coversList[gamesList[index]["id"]]!),
                   iconSize: 50,
                   onPressed: () {
+                    //print(gamesList[index]['name']);
                     db.insert(gamesList[index]);
                   },
                 ));

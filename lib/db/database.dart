@@ -13,6 +13,8 @@ part 'database.g.dart';
 class GameItems extends Table {
   IntColumn get id => integer().autoIncrement()();
 
+  IntColumn get igdbID => integer().unique()();
+
   TextColumn get name => text().withLength(min: 1, max: 128)();
 
   DateTimeColumn get releaseDate => dateTime().nullable()();
