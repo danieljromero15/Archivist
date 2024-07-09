@@ -27,6 +27,7 @@ class db {
                 game['first_release_date'] * 1000)),
             cover: Value(game['cover']),
             summary: Value(game['summary']),
+            platforms: Value(game['platforms'].toString()),
             status: const Value(0),
           ));
       //list();

@@ -1,4 +1,3 @@
-import 'package:archivist/pages/description.dart';
 import 'package:archivist/pages/home.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:archivist/pages/settings_page.dart';
@@ -66,7 +65,7 @@ class NavBar {
                   child: const SearchPage(), type: PageTransitionType.fade));
             },
           ),
-          ListTile(
+          /*ListTile(
             leading: const Icon(Icons.abc),
             title: const Text('Dscription Temp'),
             onTap: () {
@@ -74,7 +73,7 @@ class NavBar {
                   child: const DescriptionPage(),
                   type: PageTransitionType.fade));
             },
-          ),
+          ),*/
           ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),

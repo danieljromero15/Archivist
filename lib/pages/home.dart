@@ -1,3 +1,4 @@
+import 'package:archivist/pages/description.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -99,7 +100,11 @@ class _HomePageState extends State<HomePage> {
                     disabledForegroundColor: Colors.transparent,
                     disabledBackgroundColor: Colors.transparent,
                   ),*/
-                  onPressed: null,
+                  onPressed: () {
+                    Navigator.of(context).push(PageTransition(
+                        child: DescriptionPage(game: data[index]),
+                        type: PageTransitionType.fade));
+                  },
                   icon: Image.network(coverUrls[data[index].igdbID]!),
                   iconSize: 50,
                   tooltip:

@@ -23,6 +23,8 @@ class GameItems extends Table {
 
   TextColumn get summary => text().nullable()();
 
+  TextColumn get platforms => text().nullable()();
+
   IntColumn get status => integer().nullable().references(GameCategory, #id)();
 //clientDefault((){return 0;})
 }

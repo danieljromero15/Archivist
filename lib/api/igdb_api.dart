@@ -17,8 +17,11 @@ class IGDBApi {
   final protocol = 'https';
   final baseUrl = 'api.igdb.com/v4';
 
+  static Map<int, String> platforms = <int, String>{};
+
   IGDBApi() {
     login();
+    definePlatforms();
   }
 
   Future<Object> get(String uri, {Map<String, String>? headers}) async {
@@ -56,6 +59,23 @@ class IGDBApi {
     };
   }
 
+  Future<void> definePlatforms() async {
+    if (authToken.isEmpty) {
+      await login();
+    }
+
+    JsonList response = await post('$protocol://$baseUrl/platforms',
+        headers: headers,
+        // anything here needs to probably be reflected
+        body:
+        'fields name; sort id asc; limit 500;')
+    as JsonList;
+
+    for(var platform in response){
+      platforms[platform['id']] = platform['name'];
+    }
+  }
+
   Future<JsonList> searchGames(String name, {int limit = 10}) async {
     if (authToken.isEmpty) {
       await login();
@@ -70,10 +90,18 @@ class IGDBApi {
             headers: headers,
             // anything here needs to probably be reflected
             body:
-                'search "$name"; fields name, cover, first_release_date, summary; limit $limit;')
+                'search "$name"; fields name, cover, first_release_date, summary, platforms; limit $limit;')
         as JsonList;
+    //print(response);
     prevResponse = response;
     return response;
+  }
+
+  String? getPlatform(int num){
+    if(platforms.isEmpty){
+      return "";
+    }
+    return platforms[num];
   }
 
   Future<String> getCoverUrlFromJson(Json gameJson, {String? size="720p"}) async {
@@ -147,6 +175,24 @@ class IGDBApi {
       //print(coverUrls);
       return coverUrls;
     } else {
+      return null;
+    }
+  }
+
+  Future<String?> getArtworkUrl(int igdbID, {String? size="1080p"}) async {
+    if (authToken.isEmpty) {
+      await login();
+    }
+
+    JsonList response = await post('$protocol://$baseUrl/artworks',
+        headers: headers,
+        body: 'fields game, url; where game=($igdbID);') as JsonList;
+
+    if(response.isNotEmpty){
+      String thumbUrl = '$protocol:${response[0]["url"]}';
+      thumbUrl = thumbUrl.replaceFirst("t_thumb", "t_$size");
+      return thumbUrl;
+    }else{
       return null;
     }
   }
