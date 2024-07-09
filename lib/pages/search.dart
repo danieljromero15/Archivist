@@ -62,6 +62,7 @@ class _SearchPageState extends State<SearchPage> {
                     //child: Image.network(coversList[index]),
                     child: IconButton(
                   icon: Image.network(coversList[gamesList[index]["id"]]!),
+                  tooltip: "${gamesList[index]['name']} (${DateTime.fromMillisecondsSinceEpoch(gamesList[index]["first_release_date"] * 1000).year})",
                   iconSize: 50,
                   onPressed: () {
                     //print(gamesList[index]['name']);

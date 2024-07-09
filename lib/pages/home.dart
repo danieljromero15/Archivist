@@ -90,15 +90,18 @@ class _HomePageState extends State<HomePage> {
               maxCrossAxisExtent: 150,
               children: List.generate(coverUrls.length, (index) {
                 return Center(
-                    child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+                    child: IconButton(
+                  /*style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.transparent,
                     backgroundColor: Colors.transparent,
                     disabledForegroundColor: Colors.transparent,
                     disabledBackgroundColor: Colors.transparent,
-                  ),
+                  ),*/
                   onPressed: null,
-                  child: Image.network(coverUrls[data[index].igdbID]!),
+                  icon: Image.network(coverUrls[data[index].igdbID]!),
+                  iconSize: 50,
+                  tooltip:
+                      "${data[index].name} (${data[index].releaseDate?.year})",
                 ));
               }),
             ),

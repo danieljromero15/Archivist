@@ -76,12 +76,16 @@ class IGDBApi {
     return response;
   }
 
-  Future<String> getCoverUrl(Json gameJson, {String? size="720p"}) async {
+  Future<String> getCoverUrlFromJson(Json gameJson, {String? size="720p"}) async {
+    return getCoverUrl(gameJson['cover'], size: size);
+  }
+
+  Future<String> getCoverUrl(int coverId, {String? size="720p"}) async {
     if (authToken.isEmpty) {
       await login();
     }
     //print(gameJson);
-    int coverId = gameJson['cover'];
+    //int coverId = gameJson['cover'];
     //print(coverId);
     //print(headers);
     JsonList response = await post('$protocol://$baseUrl/covers',
