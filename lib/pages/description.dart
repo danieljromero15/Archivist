@@ -1,22 +1,83 @@
+import 'package:archivist/db/database.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
 import '../nav_bar.dart';
 
 class DescriptionPage extends StatefulWidget {
   //TODO Replace title with title of game
-  const DescriptionPage({super.key, this.title = 'Game Page'});
+  const DescriptionPage({super.key, required this.game});
 
-  final String title;
+  final GameItem game;
 
   @override
   State<DescriptionPage> createState() => _DescriptionPageState();
 }
 
 class _DescriptionPageState extends State<DescriptionPage> {
+  bool called = false;
+  String imageUrl =
+      "https://placehold.co/1080x1920/png"; // TODO replace with loading? idk
+  Container container = Container(
+    height: 100,
+    width: double.infinity,
+    decoration: const BoxDecoration(
+
+        /*    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage('https://images.igdb.com/igdb/image/upload/t_1080p/arku8.webp'),
+                  ) */
+        color: Colors.grey),
+  );
+  List<Text> platforms = [];
+
+  void getGameData() async {
+    if (!called) {
+      gamesApi?.getCoverUrl(widget.game.cover!, size: "1080p").then((url) {
+        setState(() {
+          imageUrl = url;
+        });
+        //print(imageUrl);
+      });
+
+      gamesApi?.getArtworkUrl(widget.game.igdbID).then((url) {
+        //print(url);
+        if (url != null) {
+          setState(() {
+            container = Container(
+              height: 300,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(url),
+              )),
+            );
+          });
+        }
+      });
+
+      List<String>? platformsInt = widget.game.platforms
+          ?.replaceFirst("[", '')
+          .replaceFirst("]", '')
+          .split(",");
+      if (platformsInt != null && platformsInt.isNotEmpty) {
+        for (String platformNum in platformsInt) {
+          platforms.add(
+              Text(gamesApi!.getPlatform(int.parse(platformNum)) as String));
+        }
+      }
+
+      called = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    getGameData();
+
     return Scaffold(
-        appBar: NavBar().buildAppBar(context, widget.title),
+        appBar: NavBar().buildAppBar(context, widget.game.name),
         drawer: NavBar().buildDrawer(context),
         body: Align(
           alignment: Alignment.topCenter,
@@ -27,40 +88,26 @@ class _DescriptionPageState extends State<DescriptionPage> {
               runAlignment: WrapAlignment.start,
               spacing: 20,
               children: [
-                Container(
-                  height: 100,
-                  width: double.infinity,
-                  // TODO: IF ARTWORK FOUND, MAKE THE ARTWORK REPLACE TEMP GREY
-                  // TODO: IF NO ARTWORK FOUND, DECREASE HEIGHT
-                  decoration: const BoxDecoration(
-
-                      /*    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage('https://images.igdb.com/igdb/image/upload/t_1080p/arku8.webp'),
-                  ) */
-                      color: Colors.grey),
-                ),
+                container,
                 const SizedBox(
                   height: 20,
                 ),
-                const Row(
+                Row(
                   children: [
                     Column(
                       children: [
-                        Image(
-                            // TODO Replace temp cover with cover of actual game
-                            image: NetworkImage(
-                                scale: 1.2,
-                                'https://images.igdb.com/igdb/image/upload/t_cover_big/co6p5e.webp')),
-                        SizedBox(
+                        Image.network(
+                          imageUrl,
+                          scale: 2.0,
+                        ),
+                        const SizedBox(
                           height: 10,
                         ),
-                        //TODO Replace Text with actual title of game
-                        Text('Doki Doki Literature Club'),
-                        SizedBox(
+                        Text(widget.game.name),
+                        const SizedBox(
                           height: 10,
                         ),
-                        DropdownMenu(
+                        const DropdownMenu(
                             label: Text('Status'),
                             dropdownMenuEntries: <DropdownMenuEntry<Text>>[
                               //TODO Replace Text field with Statuses List
@@ -75,43 +122,33 @@ class _DescriptionPageState extends State<DescriptionPage> {
                             ])
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                     Expanded(
                         child: Row(
                       children: [
                         Expanded(
-                          //TODO Replace temp summary with summary of game
-                          child: Text(
-                              'The Literature Club is full of cute girls! Will you write the way into their heart? This game is not suitable for children or those who are easily disturbed.'
-                              //  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pretium mollis gravida. Nulla ac odio vel lacus maximus aliquam gravida at lacus. Donec ac gravida augue. Phasellus vitae tortor tristique, pharetra nisi in, faucibus urna. Duis ornare orci est, vel porta nunc accumsan id. In fermentum erat sed ipsum euismod, sit amet tincidunt libero eleifend. Sed lorem nisi, maximus et lorem quis, egestas placerat nisl. Nulla leo lacus, rutrum a dignissim eget, ultricies laoreet ipsum. Duis non urna metus. Duis vitae pharetra ex, eget laoreet odio. Nam pretium at lectus id varius. Nullam laoreet purus sed erat pretium, sit amet tincidunt tellus consectetur. Donec et hendrerit urna. Mauris vitae tellus a erat tristique ultrices id eget ex.'
-
-                              ),
+                          child: Text(widget.game.summary as String),
                         ),
                         Column(
                           children: [
-                            Text('Platforms'),
+                            const Text('Platforms'),
                             Card(
                               child: Column(
-                                //TODO Replace platforms with platforms of game
-                                children: [
-                                  Text('Windows(PC)'),
-                                  Text('Mac'),
-                                  Text('Linux')
-                                ],
+                                children: platforms,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 25,
                             ),
-                            //TODO Replace release date with actual release date
-                            Text('Release Date: 2016')
+                            Text(
+                                'Release Date: ${widget.game.releaseDate?.year}')
                           ],
                         ),
                       ],
                     )),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                   ],

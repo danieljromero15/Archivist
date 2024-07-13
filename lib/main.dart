@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import 'api/igdb_api.dart';
 import 'db/database.dart';
 import 'pages/home.dart';
 
 GameDB? database;
+IGDBApi? gamesApi;
 
 void main() {
   database = GameDB();
+  gamesApi = IGDBApi();
   runApp(const MyApp());
 }
 

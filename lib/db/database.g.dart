@@ -194,6 +194,13 @@ class $GameItemsTable extends GameItems
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _igdbIDMeta = const VerificationMeta('igdbID');
+  @override
+  late final GeneratedColumn<int> igdbID = GeneratedColumn<int>(
+      'igdb_i_d', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -219,6 +226,12 @@ class $GameItemsTable extends GameItems
   late final GeneratedColumn<String> summary = GeneratedColumn<String>(
       'summary', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _platformsMeta =
+      const VerificationMeta('platforms');
+  @override
+  late final GeneratedColumn<String> platforms = GeneratedColumn<String>(
+      'platforms', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<int> status = GeneratedColumn<int>(
@@ -229,7 +242,7 @@ class $GameItemsTable extends GameItems
           GeneratedColumn.constraintIsAlways('REFERENCES game_category (id)'));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, releaseDate, cover, summary, status];
+      [id, igdbID, name, releaseDate, cover, summary, platforms, status];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -242,6 +255,12 @@ class $GameItemsTable extends GameItems
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('igdb_i_d')) {
+      context.handle(_igdbIDMeta,
+          igdbID.isAcceptableOrUnknown(data['igdb_i_d']!, _igdbIDMeta));
+    } else if (isInserting) {
+      context.missing(_igdbIDMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -263,6 +282,10 @@ class $GameItemsTable extends GameItems
       context.handle(_summaryMeta,
           summary.isAcceptableOrUnknown(data['summary']!, _summaryMeta));
     }
+    if (data.containsKey('platforms')) {
+      context.handle(_platformsMeta,
+          platforms.isAcceptableOrUnknown(data['platforms']!, _platformsMeta));
+    }
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
           status.isAcceptableOrUnknown(data['status']!, _statusMeta));
@@ -278,6 +301,8 @@ class $GameItemsTable extends GameItems
     return GameItem(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      igdbID: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}igdb_i_d'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       releaseDate: attachedDatabase.typeMapping
@@ -286,6 +311,8 @@ class $GameItemsTable extends GameItems
           .read(DriftSqlType.int, data['${effectivePrefix}cover']),
       summary: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}summary']),
+      platforms: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}platforms']),
       status: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status']),
     );
@@ -299,22 +326,27 @@ class $GameItemsTable extends GameItems
 
 class GameItem extends DataClass implements Insertable<GameItem> {
   final int id;
+  final int igdbID;
   final String name;
   final DateTime? releaseDate;
   final int? cover;
   final String? summary;
+  final String? platforms;
   final int? status;
   const GameItem(
       {required this.id,
+      required this.igdbID,
       required this.name,
       this.releaseDate,
       this.cover,
       this.summary,
+      this.platforms,
       this.status});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['igdb_i_d'] = Variable<int>(igdbID);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || releaseDate != null) {
       map['release_date'] = Variable<DateTime>(releaseDate);
@@ -325,6 +357,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
     if (!nullToAbsent || summary != null) {
       map['summary'] = Variable<String>(summary);
     }
+    if (!nullToAbsent || platforms != null) {
+      map['platforms'] = Variable<String>(platforms);
+    }
     if (!nullToAbsent || status != null) {
       map['status'] = Variable<int>(status);
     }
@@ -334,6 +369,7 @@ class GameItem extends DataClass implements Insertable<GameItem> {
   GameItemsCompanion toCompanion(bool nullToAbsent) {
     return GameItemsCompanion(
       id: Value(id),
+      igdbID: Value(igdbID),
       name: Value(name),
       releaseDate: releaseDate == null && nullToAbsent
           ? const Value.absent()
@@ -343,6 +379,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       summary: summary == null && nullToAbsent
           ? const Value.absent()
           : Value(summary),
+      platforms: platforms == null && nullToAbsent
+          ? const Value.absent()
+          : Value(platforms),
       status:
           status == null && nullToAbsent ? const Value.absent() : Value(status),
     );
@@ -353,10 +392,12 @@ class GameItem extends DataClass implements Insertable<GameItem> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GameItem(
       id: serializer.fromJson<int>(json['id']),
+      igdbID: serializer.fromJson<int>(json['igdbID']),
       name: serializer.fromJson<String>(json['name']),
       releaseDate: serializer.fromJson<DateTime?>(json['releaseDate']),
       cover: serializer.fromJson<int?>(json['cover']),
       summary: serializer.fromJson<String?>(json['summary']),
+      platforms: serializer.fromJson<String?>(json['platforms']),
       status: serializer.fromJson<int?>(json['status']),
     );
   }
@@ -365,111 +406,136 @@ class GameItem extends DataClass implements Insertable<GameItem> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'igdbID': serializer.toJson<int>(igdbID),
       'name': serializer.toJson<String>(name),
       'releaseDate': serializer.toJson<DateTime?>(releaseDate),
       'cover': serializer.toJson<int?>(cover),
       'summary': serializer.toJson<String?>(summary),
+      'platforms': serializer.toJson<String?>(platforms),
       'status': serializer.toJson<int?>(status),
     };
   }
 
   GameItem copyWith(
           {int? id,
+          int? igdbID,
           String? name,
           Value<DateTime?> releaseDate = const Value.absent(),
           Value<int?> cover = const Value.absent(),
           Value<String?> summary = const Value.absent(),
+          Value<String?> platforms = const Value.absent(),
           Value<int?> status = const Value.absent()}) =>
       GameItem(
         id: id ?? this.id,
+        igdbID: igdbID ?? this.igdbID,
         name: name ?? this.name,
         releaseDate: releaseDate.present ? releaseDate.value : this.releaseDate,
         cover: cover.present ? cover.value : this.cover,
         summary: summary.present ? summary.value : this.summary,
+        platforms: platforms.present ? platforms.value : this.platforms,
         status: status.present ? status.value : this.status,
       );
   @override
   String toString() {
     return (StringBuffer('GameItem(')
           ..write('id: $id, ')
+          ..write('igdbID: $igdbID, ')
           ..write('name: $name, ')
           ..write('releaseDate: $releaseDate, ')
           ..write('cover: $cover, ')
           ..write('summary: $summary, ')
+          ..write('platforms: $platforms, ')
           ..write('status: $status')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, releaseDate, cover, summary, status);
+  int get hashCode => Object.hash(
+      id, igdbID, name, releaseDate, cover, summary, platforms, status);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is GameItem &&
           other.id == this.id &&
+          other.igdbID == this.igdbID &&
           other.name == this.name &&
           other.releaseDate == this.releaseDate &&
           other.cover == this.cover &&
           other.summary == this.summary &&
+          other.platforms == this.platforms &&
           other.status == this.status);
 }
 
 class GameItemsCompanion extends UpdateCompanion<GameItem> {
   final Value<int> id;
+  final Value<int> igdbID;
   final Value<String> name;
   final Value<DateTime?> releaseDate;
   final Value<int?> cover;
   final Value<String?> summary;
+  final Value<String?> platforms;
   final Value<int?> status;
   const GameItemsCompanion({
     this.id = const Value.absent(),
+    this.igdbID = const Value.absent(),
     this.name = const Value.absent(),
     this.releaseDate = const Value.absent(),
     this.cover = const Value.absent(),
     this.summary = const Value.absent(),
+    this.platforms = const Value.absent(),
     this.status = const Value.absent(),
   });
   GameItemsCompanion.insert({
     this.id = const Value.absent(),
+    required int igdbID,
     required String name,
     this.releaseDate = const Value.absent(),
     this.cover = const Value.absent(),
     this.summary = const Value.absent(),
+    this.platforms = const Value.absent(),
     this.status = const Value.absent(),
-  }) : name = Value(name);
+  })  : igdbID = Value(igdbID),
+        name = Value(name);
   static Insertable<GameItem> custom({
     Expression<int>? id,
+    Expression<int>? igdbID,
     Expression<String>? name,
     Expression<DateTime>? releaseDate,
     Expression<int>? cover,
     Expression<String>? summary,
+    Expression<String>? platforms,
     Expression<int>? status,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (igdbID != null) 'igdb_i_d': igdbID,
       if (name != null) 'name': name,
       if (releaseDate != null) 'release_date': releaseDate,
       if (cover != null) 'cover': cover,
       if (summary != null) 'summary': summary,
+      if (platforms != null) 'platforms': platforms,
       if (status != null) 'status': status,
     });
   }
 
   GameItemsCompanion copyWith(
       {Value<int>? id,
+      Value<int>? igdbID,
       Value<String>? name,
       Value<DateTime?>? releaseDate,
       Value<int?>? cover,
       Value<String?>? summary,
+      Value<String?>? platforms,
       Value<int?>? status}) {
     return GameItemsCompanion(
       id: id ?? this.id,
+      igdbID: igdbID ?? this.igdbID,
       name: name ?? this.name,
       releaseDate: releaseDate ?? this.releaseDate,
       cover: cover ?? this.cover,
       summary: summary ?? this.summary,
+      platforms: platforms ?? this.platforms,
       status: status ?? this.status,
     );
   }
@@ -479,6 +545,9 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (igdbID.present) {
+      map['igdb_i_d'] = Variable<int>(igdbID.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -492,6 +561,9 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     if (summary.present) {
       map['summary'] = Variable<String>(summary.value);
     }
+    if (platforms.present) {
+      map['platforms'] = Variable<String>(platforms.value);
+    }
     if (status.present) {
       map['status'] = Variable<int>(status.value);
     }
@@ -502,10 +574,12 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
   String toString() {
     return (StringBuffer('GameItemsCompanion(')
           ..write('id: $id, ')
+          ..write('igdbID: $igdbID, ')
           ..write('name: $name, ')
           ..write('releaseDate: $releaseDate, ')
           ..write('cover: $cover, ')
           ..write('summary: $summary, ')
+          ..write('platforms: $platforms, ')
           ..write('status: $status')
           ..write(')'))
         .toString();
@@ -628,18 +702,22 @@ class $$GameCategoryTableOrderingComposer
 
 typedef $$GameItemsTableInsertCompanionBuilder = GameItemsCompanion Function({
   Value<int> id,
+  required int igdbID,
   required String name,
   Value<DateTime?> releaseDate,
   Value<int?> cover,
   Value<String?> summary,
+  Value<String?> platforms,
   Value<int?> status,
 });
 typedef $$GameItemsTableUpdateCompanionBuilder = GameItemsCompanion Function({
   Value<int> id,
+  Value<int> igdbID,
   Value<String> name,
   Value<DateTime?> releaseDate,
   Value<int?> cover,
   Value<String?> summary,
+  Value<String?> platforms,
   Value<int?> status,
 });
 
@@ -664,34 +742,42 @@ class $$GameItemsTableTableManager extends RootTableManager<
               $$GameItemsTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            Value<int> igdbID = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<DateTime?> releaseDate = const Value.absent(),
             Value<int?> cover = const Value.absent(),
             Value<String?> summary = const Value.absent(),
+            Value<String?> platforms = const Value.absent(),
             Value<int?> status = const Value.absent(),
           }) =>
               GameItemsCompanion(
             id: id,
+            igdbID: igdbID,
             name: name,
             releaseDate: releaseDate,
             cover: cover,
             summary: summary,
+            platforms: platforms,
             status: status,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            required int igdbID,
             required String name,
             Value<DateTime?> releaseDate = const Value.absent(),
             Value<int?> cover = const Value.absent(),
             Value<String?> summary = const Value.absent(),
+            Value<String?> platforms = const Value.absent(),
             Value<int?> status = const Value.absent(),
           }) =>
               GameItemsCompanion.insert(
             id: id,
+            igdbID: igdbID,
             name: name,
             releaseDate: releaseDate,
             cover: cover,
             summary: summary,
+            platforms: platforms,
             status: status,
           ),
         ));
@@ -717,6 +803,11 @@ class $$GameItemsTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<int> get igdbID => $state.composableBuilder(
+      column: $state.table.igdbID,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   ColumnFilters<String> get name => $state.composableBuilder(
       column: $state.table.name,
       builder: (column, joinBuilders) =>
@@ -734,6 +825,11 @@ class $$GameItemsTableFilterComposer
 
   ColumnFilters<String> get summary => $state.composableBuilder(
       column: $state.table.summary,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get platforms => $state.composableBuilder(
+      column: $state.table.platforms,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -758,6 +854,11 @@ class $$GameItemsTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<int> get igdbID => $state.composableBuilder(
+      column: $state.table.igdbID,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<String> get name => $state.composableBuilder(
       column: $state.table.name,
       builder: (column, joinBuilders) =>
@@ -775,6 +876,11 @@ class $$GameItemsTableOrderingComposer
 
   ColumnOrderings<String> get summary => $state.composableBuilder(
       column: $state.table.summary,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get platforms => $state.composableBuilder(
+      column: $state.table.platforms,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
