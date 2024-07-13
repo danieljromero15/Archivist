@@ -124,6 +124,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                 ),
                 // TODO Hook up Textfield to User Notes
                 const TextField(
+                  maxLines: 20,
+                  minLines: 3,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(), hintText: 'Notes'),
                 ),
