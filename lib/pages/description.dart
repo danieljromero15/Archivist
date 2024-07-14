@@ -1,5 +1,7 @@
 import 'package:archivist/db/database.dart';
+import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../main.dart';
 import '../nav_bar.dart';
@@ -79,6 +81,14 @@ class _DescriptionPageState extends State<DescriptionPage> {
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.game.name),
         drawer: NavBar().buildDrawer(context),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(PageTransition(
+                child: const SearchPage(), type: PageTransitionType.fade));
+          },
+          tooltip: 'Search',
+          child: const Icon(Icons.search),
+        ),
         body: Align(
           alignment: Alignment.topCenter,
           child: SizedBox(
@@ -98,7 +108,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                       children: [
                         Image.network(
                           imageUrl,
-                          scale: 2.0,
+                          scale: 3.0,
                         ),
                         const SizedBox(
                           height: 10,
@@ -161,6 +171,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                 ),
                 // TODO Hook up Textfield to User Notes
                 const TextField(
+                  minLines: 3,
+                  maxLines: 20,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(), hintText: 'Notes'),
                 ),
