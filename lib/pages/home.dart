@@ -1,10 +1,11 @@
-import 'package:archivist/api/igdb_api.dart';
+import 'package:archivist/pages/description.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../db/database.dart';
 import '../db/use_database.dart';
+import '../main.dart';
 import '../nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,22 +27,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool called = false;
   List<GameItem> data = [];
-  List<String> coverUrls = [];
+  Map<int, String> coverUrls = <int, String>{};
 
   void getDBData() async {
-    db.get().then((response) {
-      //print(response);
-      //print(response?[0].cover);
-      IGDBApi().getCoverUrls(response!).then((i) {
-        //print(i);
-        setState(() {
-          //print(response.runtimeType);
-          data = response;
-          coverUrls = i;
-        });
+    if (!called) {
+      db.get().then((response) {
+        //print(response);
+        //print(response?[0].cover);
+        if (response!.isNotEmpty) {
+          gamesApi?.getCoverUrls(response).then((i) {
+            //print(i);
+            setState(() {
+              //print(response.runtimeType);
+              data = response;
+              coverUrls = i!;
+            });
+          });
+        }
       });
-    });
+      called = true;
+    }
   }
 
   @override
@@ -106,7 +113,6 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../api/igdb_api.dart';
 import '../db/use_database.dart';
 import '../json_types.dart';
+import '../main.dart';
 import '../nav_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -18,17 +18,18 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   bool called = false;
   JsonList gamesList = [];
-  List<String> coversList = [];
+  Map<int, String> coversList = <int, String>{};
 
   void getGames() {
     if (!called) {
-      if (coversList.isNotEmpty) coversList = [];
-      IGDBApi().searchGames("Final Fantasy").then((r) {
-        IGDBApi().getCoverUrls(r).then((urls) {
+      if (coversList.isNotEmpty) coversList.clear();
+      gamesApi?.searchGames("Final Fantasy", limit: 25).then((r) {
+        gamesApi?.getCoverUrls(r).then((urls) {
           setState(() {
             gamesList = r;
-            coversList = urls;
+            coversList = urls!;
           });
+          //print(gamesList);
         });
       });
       called = true;
@@ -37,7 +38,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    //IGDBApi().test();
+    //gamesApi.test();
     getGames();
 
     return Scaffold(
@@ -46,8 +47,7 @@ class _SearchPageState extends State<SearchPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(PageTransition(
-                child: const SearchPage(),
-                type: PageTransitionType.fade));
+                child: const SearchPage(), type: PageTransitionType.fade));
           },
           tooltip: 'Search',
           child: const Icon(Icons.search),
