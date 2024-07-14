@@ -1,5 +1,6 @@
-import 'package:archivist/db/database.dart';
+import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../main.dart';
 import '../nav_bar.dart';
@@ -161,12 +162,23 @@ class _DescriptionPageState extends State<DescriptionPage> {
                 ),
                 // TODO Hook up Textfield to User Notes
                 const TextField(
+                  maxLines: 20,
+                  minLines: 3,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(), hintText: 'Notes'),
                 ),
               ],
             ),
           ),
-        ));
+        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(PageTransition(
+              child: const SearchPage(), type: PageTransitionType.fade));
+        },
+        tooltip: 'Search',
+        child: const Icon(Icons.search),
+      ),
+    );
   }
 }

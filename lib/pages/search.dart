@@ -52,26 +52,31 @@ class _SearchPageState extends State<SearchPage> {
           tooltip: 'Search',
           child: const Icon(Icons.search),
         ),
-        body: Column(
-          children: [
-            Expanded(
-                child: GridView.extent(
-              maxCrossAxisExtent: 150,
-              children: List.generate(coversList.length, (index) {
-                return Center(
-                    //child: Image.network(coversList[index]),
-                    child: IconButton(
-                  icon: Image.network(coversList[gamesList[index]["id"]]!),
-                  tooltip: "${gamesList[index]['name']} (${DateTime.fromMillisecondsSinceEpoch(gamesList[index]["first_release_date"] * 1000).year})",
-                  iconSize: 50,
-                  onPressed: () {
-                    //print(gamesList[index]['name']);
-                    db.insert(gamesList[index]);
-                  },
-                ));
-              }),
-            )),
-          ],
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: double.infinity,
+            width: 1600,
+            child: Column(
+              children: [
+                Expanded(
+                    child: GridView.extent(
+                  maxCrossAxisExtent: 150,
+                  children: List.generate(coversList.length, (index) {
+                    return Center(
+                        //child: Image.network(coversList[index]),
+                        child: IconButton(
+                      icon: Image.network(coversList[index]),
+                      iconSize: 50,
+                      onPressed: () {
+                        db.insert(gamesList[index]);
+                      },
+                    ));
+                  }),
+                )),
+              ],
+            ),
+          ),
         ));
   }
 }
