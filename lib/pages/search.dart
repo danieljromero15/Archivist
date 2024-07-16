@@ -58,6 +58,29 @@ class _SearchPageState extends State<SearchPage> {
             width: 1600,
             child: Column(
               children: [
+                const Wrap(
+                  children: [
+                    SizedBox(
+                      width: 800,
+                      child: TextField(
+                        minLines: 1,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(), hintText: 'search'),
+                      ),
+                    ),
+                    ElevatedButton(
+                        /*  style: ElevatedButton.styleFrom(
+                        fixedSize: Size(200, 200)
+                      ),*/
+                        onPressed: null,
+                        child: Icon(Icons.search))
+                  ],
+                ),
+                const SizedBox(height: 50),
+                const Align(
+                    alignment: Alignment.centerLeft,
+                    child: const Text('top games')),
                 Expanded(
                     child: GridView.extent(
                   maxCrossAxisExtent: 150,
@@ -66,7 +89,8 @@ class _SearchPageState extends State<SearchPage> {
                         //child: Image.network(coversList[index]),
                         child: IconButton(
                       icon: Image.network(coversList[gamesList[index]["id"]]!),
-                      tooltip: "${gamesList[index]['name']} (${DateTime.fromMillisecondsSinceEpoch(gamesList[index]["first_release_date"] * 1000).year})",
+                      tooltip:
+                          "${gamesList[index]['name']} (${DateTime.fromMillisecondsSinceEpoch(gamesList[index]["first_release_date"] * 1000).year})",
                       iconSize: 50,
                       onPressed: () {
                         //print(gamesList[index]['name']);
