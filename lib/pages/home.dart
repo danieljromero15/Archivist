@@ -27,23 +27,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Status? status;
   bool called = false;
   List<GameItem> data = [];
   Map<int, String> coverUrls = <int, String>{};
 
+  void changePage(Status? status) {
+    this.status = status;
+    called = false;
+    getDBData();
+  }
+
   void getDBData() async {
     if (!called) {
-      db.getAll().then((response) {
-        //print(response);
-        //print(response?[0].cover);
-        if (response!.isNotEmpty) {
+      db.getAll(status: status).then((response) {
+        if (response.isNotEmpty) {
           gamesApi?.getCoverUrls(response).then((i) {
-            //print(i);
             setState(() {
-              //print(response.runtimeType);
               data = response;
               coverUrls = i!;
             });
+          });
+        }else{
+          setState(() {
+            data = response;
+            coverUrls.clear();
           });
         }
       });
@@ -62,6 +70,8 @@ class _HomePageState extends State<HomePage> {
     //db().test();
     getDBData();
 
+    //print(status);
+
     return Scaffold(
       appBar: NavBar().buildAppBar(context, widget.title),
       drawer: NavBar().buildDrawer(context),
@@ -77,19 +87,38 @@ class _HomePageState extends State<HomePage> {
               Wrap(
                 spacing: 10.0,
                 alignment: WrapAlignment.spaceEvenly,
-                //TODO implement onPressed
                 children: [
-                  const ElevatedButton(onPressed: null, child: Text('All')),
-                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.planning]!)),
-                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.playing]!)),
-                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.finished]!)),
-                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.completed]!)),
+                  ElevatedButton(
+                      onPressed: () {
+                        changePage(null);
+                      },
+                      child: const Text('All')),
+                  ElevatedButton(
+                      onPressed: () {
+                        changePage(Status.planning);
+                      },
+                      child: Text(statusMap[Status.planning]!)),
+                  ElevatedButton(
+                      onPressed: () {
+                        changePage(Status.playing);
+                      },
+                      child: Text(statusMap[Status.playing]!)),
+                  ElevatedButton(
+                      onPressed: () {
+                        changePage(Status.finished);
+                      },
+                      child: Text(statusMap[Status.finished]!)),
+                  ElevatedButton(
+                      onPressed: () {
+                        changePage(Status.completed);
+                      },
+                      child: Text(statusMap[Status.completed]!)),
                 ],
               ),
               const SizedBox(
                 height: 50,
               ),
-              const Text('Planning'), //TODO replace with current page
+              Text(statusMap[status]!),
               const SizedBox(
                 height: 10,
               ),

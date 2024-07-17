@@ -15,7 +15,8 @@ enum Status {
 }
 
 // changes here are reflected across the rest of the program
-Map<Status, String> statusMap = {
+Map<Status?, String> statusMap = {
+  null: "All",
   Status.planning: "Planning",
   Status.playing: "Playing",
   Status.finished: "Completed",
