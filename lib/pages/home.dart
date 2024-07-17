@@ -111,8 +111,8 @@ class _HomePageState extends State<HomePage> {
                       },
                       icon: Image.network(coverUrls[data[index].igdbID]!),
                       iconSize: 50,
-                      tooltip:
-                          "${data[index].name} (${data[index].releaseDate?.year})",
+                      tooltip: getTooltip(data[index].name,
+                          year: data[index].releaseDate?.year),
                     ));
                   }),
                 ),
