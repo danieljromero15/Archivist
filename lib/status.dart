@@ -1,16 +1,14 @@
 
 
-import 'package:archivist/pages/description.dart';
-import 'package:archivist/pages/home.dart';
-import 'package:flutter/material.dart';
-import '../main.dart';
-import '../nav_bar.dart';
+
 
 List<String> planningGames = [];
 List<String> playingGames = [];
 List<String> completedGames = [];
 List<String> oneHundredGames = [];
-void onStatusSelected(int num){
+
+//Used to set status from description.dart
+ onStatusSelected(int num){
   switch(num){
     case 0:
       // code
@@ -29,6 +27,27 @@ void onStatusSelected(int num){
     //oneHundredGames.add();
       break;
     default: return null;
+  }
+}
+
+//Used to repopulate home page based on tab selected
+ filterStatus(int num){
+  switch(num){
+    case 0:
+      //code
+      break;
+    case 1:
+      //code
+      break;
+    case 2:
+      //code
+      break;
+    case 3:
+      //code
+      break;
+    case 4:
+      //code
+      break;
   }
 }
 
