@@ -6,12 +6,14 @@ import '../json_types.dart';
 import '../main.dart';
 
 class db {
+
   static void list() async {
     List<GameItem>? allItems =
-        await database?.select(database!.gameItems).get();
+        await database!.select(database!.gameItems).get();
     print('items in database: $allItems');
   }
 
+  // TODO add status parameter when that's implemented
   static void insert(Json game) async {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -28,7 +30,7 @@ class db {
             cover: Value(game['cover']),
             summary: Value(game['summary']),
             platforms: Value(game['platforms'].toString()),
-            status: const Value(0),
+            status: Status.planning,
           ));
       //list();
     } else {
@@ -36,15 +38,61 @@ class db {
     }
   }
 
-  static Future<List<GameItem>?> get() async {
-    List<GameItem>? allItems =
-        await database?.select(database!.gameItems).get();
+  static Future<List<GameItem>> getAll({Status? status}) async {
+    List<GameItem> allItems;
+    if (status == null) {
+      allItems = await database!.select(database!.gameItems).get();
+    }else{
+      allItems = await database!.managers.gameItems.filter((f) => f.status.equals(status)).get();
+    }
     return allItems;
+  }
+
+  static Future<GameItem?> get(
+      {int? id,
+      int? igdbID,
+      String? name,
+      DateTime? releaseDate,
+      int? coverId}) async {
+    var gameItems = database!.managers.gameItems;
+
+    if (id != null) {
+      return await gameItems.filter((f) => f.id.isIn([id])).getSingle();
+    }
+    if (igdbID != null) {
+      return await gameItems.filter((f) => f.igdbID.isIn([igdbID])).getSingle();
+    }
+    if (name != null) {
+      return await gameItems.filter((f) => f.name.equals(name)).getSingle();
+    }
+    if (releaseDate != null) {
+      return await gameItems
+          .filter((f) => f.releaseDate.equals(releaseDate))
+          .getSingle();
+    }
+    if (coverId != null) {
+      return await gameItems.filter((f) => f.cover.isIn([coverId])).getSingle();
+    }
+    return null;
+  }
+
+  static Future<void> update(
+      {required int id, Status? status, String? notes}) async {
+    $$GameItemsTableProcessedTableManager game =
+        database!.managers.gameItems.filter((f) => f.id.isIn([id]));
+
+    if (status != null) {
+      await game.update((o) => o(status: Value(status)));
+    }
+
+    if (notes != null) {
+      await game.update((o) => o(notes: Value(notes)));
+    }
   }
 
   static void deleteAll() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await database?.managers.gameItems.delete();
+    await database!.managers.gameItems.delete();
     print("Database cleared!");
     list();
   }

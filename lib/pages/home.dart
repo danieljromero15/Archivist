@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
 
   void getDBData() async {
     if (!called) {
-      db.get().then((response) {
+      db.getAll().then((response) {
         //print(response);
         //print(response?[0].cover);
         if (response!.isNotEmpty) {
@@ -74,21 +74,22 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 10,
               ),
-              const Wrap(
+              Wrap(
                 spacing: 10.0,
                 alignment: WrapAlignment.spaceEvenly,
+                //TODO implement onPressed
                 children: [
-                  ElevatedButton(onPressed: null, child: Text('All')),
-                  ElevatedButton(onPressed: null, child: Text('Planning')),
-                  ElevatedButton(onPressed: null, child: Text('Playing')),
-                  ElevatedButton(onPressed: null, child: Text('Completed')),
-                  ElevatedButton(onPressed: null, child: Text('100%')),
+                  const ElevatedButton(onPressed: null, child: Text('All')),
+                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.planning]!)),
+                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.playing]!)),
+                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.finished]!)),
+                  ElevatedButton(onPressed: null, child: Text(statusMap[Status.completed]!)),
                 ],
               ),
               const SizedBox(
                 height: 50,
               ),
-              const Text('Planning'),
+              const Text('Planning'), //TODO replace with current page
               const SizedBox(
                 height: 10,
               ),

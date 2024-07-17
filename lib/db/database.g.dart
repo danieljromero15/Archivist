@@ -3,182 +3,6 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $GameCategoryTable extends GameCategory
-    with TableInfo<$GameCategoryTable, GameCategoryData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $GameCategoryTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _statusNameMeta =
-      const VerificationMeta('statusName');
-  @override
-  late final GeneratedColumn<String> statusName = GeneratedColumn<String>(
-      'status_name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns => [id, statusName];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'game_category';
-  @override
-  VerificationContext validateIntegrity(Insertable<GameCategoryData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('status_name')) {
-      context.handle(
-          _statusNameMeta,
-          statusName.isAcceptableOrUnknown(
-              data['status_name']!, _statusNameMeta));
-    } else if (isInserting) {
-      context.missing(_statusNameMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  GameCategoryData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return GameCategoryData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      statusName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}status_name'])!,
-    );
-  }
-
-  @override
-  $GameCategoryTable createAlias(String alias) {
-    return $GameCategoryTable(attachedDatabase, alias);
-  }
-}
-
-class GameCategoryData extends DataClass
-    implements Insertable<GameCategoryData> {
-  final int id;
-  final String statusName;
-  const GameCategoryData({required this.id, required this.statusName});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['status_name'] = Variable<String>(statusName);
-    return map;
-  }
-
-  GameCategoryCompanion toCompanion(bool nullToAbsent) {
-    return GameCategoryCompanion(
-      id: Value(id),
-      statusName: Value(statusName),
-    );
-  }
-
-  factory GameCategoryData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return GameCategoryData(
-      id: serializer.fromJson<int>(json['id']),
-      statusName: serializer.fromJson<String>(json['statusName']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'statusName': serializer.toJson<String>(statusName),
-    };
-  }
-
-  GameCategoryData copyWith({int? id, String? statusName}) => GameCategoryData(
-        id: id ?? this.id,
-        statusName: statusName ?? this.statusName,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('GameCategoryData(')
-          ..write('id: $id, ')
-          ..write('statusName: $statusName')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, statusName);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is GameCategoryData &&
-          other.id == this.id &&
-          other.statusName == this.statusName);
-}
-
-class GameCategoryCompanion extends UpdateCompanion<GameCategoryData> {
-  final Value<int> id;
-  final Value<String> statusName;
-  const GameCategoryCompanion({
-    this.id = const Value.absent(),
-    this.statusName = const Value.absent(),
-  });
-  GameCategoryCompanion.insert({
-    this.id = const Value.absent(),
-    required String statusName,
-  }) : statusName = Value(statusName);
-  static Insertable<GameCategoryData> custom({
-    Expression<int>? id,
-    Expression<String>? statusName,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (statusName != null) 'status_name': statusName,
-    });
-  }
-
-  GameCategoryCompanion copyWith({Value<int>? id, Value<String>? statusName}) {
-    return GameCategoryCompanion(
-      id: id ?? this.id,
-      statusName: statusName ?? this.statusName,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (statusName.present) {
-      map['status_name'] = Variable<String>(statusName.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('GameCategoryCompanion(')
-          ..write('id: $id, ')
-          ..write('statusName: $statusName')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $GameItemsTable extends GameItems
     with TableInfo<$GameItemsTable, GameItem> {
   @override
@@ -234,15 +58,18 @@ class $GameItemsTable extends GameItems
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  late final GeneratedColumn<int> status = GeneratedColumn<int>(
-      'status', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES game_category (id)'));
+  late final GeneratedColumnWithTypeConverter<Status, int> status =
+      GeneratedColumn<int>('status', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<Status>($GameItemsTable.$converterstatus);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, igdbID, name, releaseDate, cover, summary, platforms, status];
+      [id, igdbID, name, releaseDate, cover, summary, platforms, status, notes];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -286,9 +113,10 @@ class $GameItemsTable extends GameItems
       context.handle(_platformsMeta,
           platforms.isAcceptableOrUnknown(data['platforms']!, _platformsMeta));
     }
-    if (data.containsKey('status')) {
-      context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    context.handle(_statusMeta, const VerificationResult.success());
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
     return context;
   }
@@ -313,8 +141,11 @@ class $GameItemsTable extends GameItems
           .read(DriftSqlType.string, data['${effectivePrefix}summary']),
       platforms: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}platforms']),
-      status: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}status']),
+      status: $GameItemsTable.$converterstatus.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
     );
   }
 
@@ -322,6 +153,9 @@ class $GameItemsTable extends GameItems
   $GameItemsTable createAlias(String alias) {
     return $GameItemsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<Status, int, int> $converterstatus =
+      const EnumIndexConverter<Status>(Status.values);
 }
 
 class GameItem extends DataClass implements Insertable<GameItem> {
@@ -332,7 +166,8 @@ class GameItem extends DataClass implements Insertable<GameItem> {
   final int? cover;
   final String? summary;
   final String? platforms;
-  final int? status;
+  final Status status;
+  final String? notes;
   const GameItem(
       {required this.id,
       required this.igdbID,
@@ -341,7 +176,8 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       this.cover,
       this.summary,
       this.platforms,
-      this.status});
+      required this.status,
+      this.notes});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -360,8 +196,12 @@ class GameItem extends DataClass implements Insertable<GameItem> {
     if (!nullToAbsent || platforms != null) {
       map['platforms'] = Variable<String>(platforms);
     }
-    if (!nullToAbsent || status != null) {
-      map['status'] = Variable<int>(status);
+    {
+      map['status'] =
+          Variable<int>($GameItemsTable.$converterstatus.toSql(status));
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
     }
     return map;
   }
@@ -382,8 +222,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       platforms: platforms == null && nullToAbsent
           ? const Value.absent()
           : Value(platforms),
-      status:
-          status == null && nullToAbsent ? const Value.absent() : Value(status),
+      status: Value(status),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
     );
   }
 
@@ -398,7 +239,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       cover: serializer.fromJson<int?>(json['cover']),
       summary: serializer.fromJson<String?>(json['summary']),
       platforms: serializer.fromJson<String?>(json['platforms']),
-      status: serializer.fromJson<int?>(json['status']),
+      status: $GameItemsTable.$converterstatus
+          .fromJson(serializer.fromJson<int>(json['status'])),
+      notes: serializer.fromJson<String?>(json['notes']),
     );
   }
   @override
@@ -412,7 +255,9 @@ class GameItem extends DataClass implements Insertable<GameItem> {
       'cover': serializer.toJson<int?>(cover),
       'summary': serializer.toJson<String?>(summary),
       'platforms': serializer.toJson<String?>(platforms),
-      'status': serializer.toJson<int?>(status),
+      'status': serializer
+          .toJson<int>($GameItemsTable.$converterstatus.toJson(status)),
+      'notes': serializer.toJson<String?>(notes),
     };
   }
 
@@ -424,7 +269,8 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           Value<int?> cover = const Value.absent(),
           Value<String?> summary = const Value.absent(),
           Value<String?> platforms = const Value.absent(),
-          Value<int?> status = const Value.absent()}) =>
+          Status? status,
+          Value<String?> notes = const Value.absent()}) =>
       GameItem(
         id: id ?? this.id,
         igdbID: igdbID ?? this.igdbID,
@@ -433,7 +279,8 @@ class GameItem extends DataClass implements Insertable<GameItem> {
         cover: cover.present ? cover.value : this.cover,
         summary: summary.present ? summary.value : this.summary,
         platforms: platforms.present ? platforms.value : this.platforms,
-        status: status.present ? status.value : this.status,
+        status: status ?? this.status,
+        notes: notes.present ? notes.value : this.notes,
       );
   @override
   String toString() {
@@ -445,14 +292,15 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           ..write('cover: $cover, ')
           ..write('summary: $summary, ')
           ..write('platforms: $platforms, ')
-          ..write('status: $status')
+          ..write('status: $status, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(
-      id, igdbID, name, releaseDate, cover, summary, platforms, status);
+      id, igdbID, name, releaseDate, cover, summary, platforms, status, notes);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -464,7 +312,8 @@ class GameItem extends DataClass implements Insertable<GameItem> {
           other.cover == this.cover &&
           other.summary == this.summary &&
           other.platforms == this.platforms &&
-          other.status == this.status);
+          other.status == this.status &&
+          other.notes == this.notes);
 }
 
 class GameItemsCompanion extends UpdateCompanion<GameItem> {
@@ -475,7 +324,8 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
   final Value<int?> cover;
   final Value<String?> summary;
   final Value<String?> platforms;
-  final Value<int?> status;
+  final Value<Status> status;
+  final Value<String?> notes;
   const GameItemsCompanion({
     this.id = const Value.absent(),
     this.igdbID = const Value.absent(),
@@ -485,6 +335,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     this.summary = const Value.absent(),
     this.platforms = const Value.absent(),
     this.status = const Value.absent(),
+    this.notes = const Value.absent(),
   });
   GameItemsCompanion.insert({
     this.id = const Value.absent(),
@@ -494,9 +345,11 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     this.cover = const Value.absent(),
     this.summary = const Value.absent(),
     this.platforms = const Value.absent(),
-    this.status = const Value.absent(),
+    required Status status,
+    this.notes = const Value.absent(),
   })  : igdbID = Value(igdbID),
-        name = Value(name);
+        name = Value(name),
+        status = Value(status);
   static Insertable<GameItem> custom({
     Expression<int>? id,
     Expression<int>? igdbID,
@@ -506,6 +359,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
     Expression<String>? summary,
     Expression<String>? platforms,
     Expression<int>? status,
+    Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -516,6 +370,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
       if (summary != null) 'summary': summary,
       if (platforms != null) 'platforms': platforms,
       if (status != null) 'status': status,
+      if (notes != null) 'notes': notes,
     });
   }
 
@@ -527,7 +382,8 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
       Value<int?>? cover,
       Value<String?>? summary,
       Value<String?>? platforms,
-      Value<int?>? status}) {
+      Value<Status>? status,
+      Value<String?>? notes}) {
     return GameItemsCompanion(
       id: id ?? this.id,
       igdbID: igdbID ?? this.igdbID,
@@ -537,6 +393,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
       summary: summary ?? this.summary,
       platforms: platforms ?? this.platforms,
       status: status ?? this.status,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -565,7 +422,11 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
       map['platforms'] = Variable<String>(platforms.value);
     }
     if (status.present) {
-      map['status'] = Variable<int>(status.value);
+      map['status'] =
+          Variable<int>($GameItemsTable.$converterstatus.toSql(status.value));
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
     }
     return map;
   }
@@ -580,7 +441,8 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
           ..write('cover: $cover, ')
           ..write('summary: $summary, ')
           ..write('platforms: $platforms, ')
-          ..write('status: $status')
+          ..write('status: $status, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -589,115 +451,12 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
 abstract class _$GameDB extends GeneratedDatabase {
   _$GameDB(QueryExecutor e) : super(e);
   _$GameDBManager get managers => _$GameDBManager(this);
-  late final $GameCategoryTable gameCategory = $GameCategoryTable(this);
   late final $GameItemsTable gameItems = $GameItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [gameCategory, gameItems];
-}
-
-typedef $$GameCategoryTableInsertCompanionBuilder = GameCategoryCompanion
-    Function({
-  Value<int> id,
-  required String statusName,
-});
-typedef $$GameCategoryTableUpdateCompanionBuilder = GameCategoryCompanion
-    Function({
-  Value<int> id,
-  Value<String> statusName,
-});
-
-class $$GameCategoryTableTableManager extends RootTableManager<
-    _$GameDB,
-    $GameCategoryTable,
-    GameCategoryData,
-    $$GameCategoryTableFilterComposer,
-    $$GameCategoryTableOrderingComposer,
-    $$GameCategoryTableProcessedTableManager,
-    $$GameCategoryTableInsertCompanionBuilder,
-    $$GameCategoryTableUpdateCompanionBuilder> {
-  $$GameCategoryTableTableManager(_$GameDB db, $GameCategoryTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$GameCategoryTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$GameCategoryTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$GameCategoryTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> statusName = const Value.absent(),
-          }) =>
-              GameCategoryCompanion(
-            id: id,
-            statusName: statusName,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String statusName,
-          }) =>
-              GameCategoryCompanion.insert(
-            id: id,
-            statusName: statusName,
-          ),
-        ));
-}
-
-class $$GameCategoryTableProcessedTableManager extends ProcessedTableManager<
-    _$GameDB,
-    $GameCategoryTable,
-    GameCategoryData,
-    $$GameCategoryTableFilterComposer,
-    $$GameCategoryTableOrderingComposer,
-    $$GameCategoryTableProcessedTableManager,
-    $$GameCategoryTableInsertCompanionBuilder,
-    $$GameCategoryTableUpdateCompanionBuilder> {
-  $$GameCategoryTableProcessedTableManager(super.$state);
-}
-
-class $$GameCategoryTableFilterComposer
-    extends FilterComposer<_$GameDB, $GameCategoryTable> {
-  $$GameCategoryTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get statusName => $state.composableBuilder(
-      column: $state.table.statusName,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ComposableFilter gameItemsRefs(
-      ComposableFilter Function($$GameItemsTableFilterComposer f) f) {
-    final $$GameItemsTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.gameItems,
-        getReferencedColumn: (t) => t.status,
-        builder: (joinBuilder, parentComposers) =>
-            $$GameItemsTableFilterComposer(ComposerState(
-                $state.db, $state.db.gameItems, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$GameCategoryTableOrderingComposer
-    extends OrderingComposer<_$GameDB, $GameCategoryTable> {
-  $$GameCategoryTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get statusName => $state.composableBuilder(
-      column: $state.table.statusName,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  List<DatabaseSchemaEntity> get allSchemaEntities => [gameItems];
 }
 
 typedef $$GameItemsTableInsertCompanionBuilder = GameItemsCompanion Function({
@@ -708,7 +467,8 @@ typedef $$GameItemsTableInsertCompanionBuilder = GameItemsCompanion Function({
   Value<int?> cover,
   Value<String?> summary,
   Value<String?> platforms,
-  Value<int?> status,
+  required Status status,
+  Value<String?> notes,
 });
 typedef $$GameItemsTableUpdateCompanionBuilder = GameItemsCompanion Function({
   Value<int> id,
@@ -718,7 +478,8 @@ typedef $$GameItemsTableUpdateCompanionBuilder = GameItemsCompanion Function({
   Value<int?> cover,
   Value<String?> summary,
   Value<String?> platforms,
-  Value<int?> status,
+  Value<Status> status,
+  Value<String?> notes,
 });
 
 class $$GameItemsTableTableManager extends RootTableManager<
@@ -748,7 +509,8 @@ class $$GameItemsTableTableManager extends RootTableManager<
             Value<int?> cover = const Value.absent(),
             Value<String?> summary = const Value.absent(),
             Value<String?> platforms = const Value.absent(),
-            Value<int?> status = const Value.absent(),
+            Value<Status> status = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
           }) =>
               GameItemsCompanion(
             id: id,
@@ -759,6 +521,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             summary: summary,
             platforms: platforms,
             status: status,
+            notes: notes,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -768,7 +531,8 @@ class $$GameItemsTableTableManager extends RootTableManager<
             Value<int?> cover = const Value.absent(),
             Value<String?> summary = const Value.absent(),
             Value<String?> platforms = const Value.absent(),
-            Value<int?> status = const Value.absent(),
+            required Status status,
+            Value<String?> notes = const Value.absent(),
           }) =>
               GameItemsCompanion.insert(
             id: id,
@@ -779,6 +543,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             summary: summary,
             platforms: platforms,
             status: status,
+            notes: notes,
           ),
         ));
 }
@@ -833,17 +598,17 @@ class $$GameItemsTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$GameCategoryTableFilterComposer get status {
-    final $$GameCategoryTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.status,
-        referencedTable: $state.db.gameCategory,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$GameCategoryTableFilterComposer(ComposerState($state.db,
-                $state.db.gameCategory, joinBuilder, parentComposers)));
-    return composer;
-  }
+  ColumnWithTypeConverterFilters<Status, Status, int> get status =>
+      $state.composableBuilder(
+          column: $state.table.status,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get notes => $state.composableBuilder(
+      column: $state.table.notes,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$GameItemsTableOrderingComposer
@@ -884,24 +649,20 @@ class $$GameItemsTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$GameCategoryTableOrderingComposer get status {
-    final $$GameCategoryTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.status,
-        referencedTable: $state.db.gameCategory,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$GameCategoryTableOrderingComposer(ComposerState($state.db,
-                $state.db.gameCategory, joinBuilder, parentComposers)));
-    return composer;
-  }
+  ColumnOrderings<int> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get notes => $state.composableBuilder(
+      column: $state.table.notes,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 class _$GameDBManager {
   final _$GameDB _db;
   _$GameDBManager(this._db);
-  $$GameCategoryTableTableManager get gameCategory =>
-      $$GameCategoryTableTableManager(_db, _db.gameCategory);
   $$GameItemsTableTableManager get gameItems =>
       $$GameItemsTableTableManager(_db, _db.gameItems);
 }

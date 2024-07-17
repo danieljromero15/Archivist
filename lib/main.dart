@@ -7,6 +7,21 @@ import 'pages/home.dart';
 GameDB? database;
 IGDBApi? gamesApi;
 
+enum Status {
+  planning,
+  playing,
+  finished, // completed on frontend
+  completed, // 100% on frontend
+}
+
+// changes here are reflected across the rest of the program
+Map<Status, String> statusMap = {
+  Status.planning: "Planning",
+  Status.playing: "Playing",
+  Status.finished: "Completed",
+  Status.completed: "100%",
+};
+
 void main() {
   database = GameDB();
   gamesApi = IGDBApi();
