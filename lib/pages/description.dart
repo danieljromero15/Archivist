@@ -3,12 +3,11 @@ import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../db/use_database.dart';
 import '../main.dart';
 import '../nav_bar.dart';
-import '../status.dart';
 
 class DescriptionPage extends StatefulWidget {
-  //TODO Replace title with title of game
   const DescriptionPage({super.key, required this.game});
 
   final GameItem game;
@@ -77,10 +76,19 @@ class _DescriptionPageState extends State<DescriptionPage> {
 
   @override
   Widget build(BuildContext context) {
+    var game = widget.game;
+
     getGameData();
 
+    // populates notes field with notes data if there already is data
+    TextEditingController notesField = TextEditingController();
+    TextEditingController statusDropdown = TextEditingController();
+    if (game.notes != null) notesField.text = game.notes.toString();
+    statusDropdown.text = statusMap[game.status]!;
+
+
     return Scaffold(
-        appBar: NavBar().buildAppBar(context, widget.game.name),
+        appBar: NavBar().buildAppBar(context, game.name),
         drawer: NavBar().buildDrawer(context),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -114,23 +122,27 @@ class _DescriptionPageState extends State<DescriptionPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(widget.game.name),
+                        Text(game.name),
                         const SizedBox(
                           height: 10,
                         ),
-                         DropdownMenu(
-                            label: Text('Status'),
-                            dropdownMenuEntries: <DropdownMenuEntry<void>>[
-                              //TODO Replace Text field with Statuses List
+                        DropdownMenu(
+                          controller: statusDropdown,
+                            label: const Text('Status'),
+                            dropdownMenuEntries: <DropdownMenuEntry<Status>>[
                               DropdownMenuEntry(
-                                  value: onStatusSelected(0), label: 'Planning'),
+                                  value: Status.planning, label: statusMap[Status.planning].toString()),
                               DropdownMenuEntry(
-                                  value: onStatusSelected(1), label: 'Playing'),
+                                  value: Status.playing, label: statusMap[Status.playing].toString()),
                               DropdownMenuEntry(
-                                  value: onStatusSelected(2), label: 'Completed'),
+                                  value: Status.finished, label: statusMap[Status.finished].toString()),
                               DropdownMenuEntry(
-                                  value: onStatusSelected(3), label: '100%')
-                            ])
+                                  value: Status.completed, label: statusMap[Status.completed].toString())
+                            ],
+                          onSelected: (status){
+                            db.update(id: game.id, status: status);
+                          },
+                        )
                       ],
                     ),
                     const SizedBox(
@@ -140,7 +152,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                         child: Row(
                       children: [
                         Expanded(
-                          child: Text(widget.game.summary as String),
+                          child: Text(game.summary as String),
                         ),
                         Column(
                           children: [
@@ -154,7 +166,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                               height: 25,
                             ),
                             Text(
-                                'Release Date: ${widget.game.releaseDate?.year}')
+                                'Release Date: ${game.releaseDate?.year}')
                           ],
                         ),
                       ],
@@ -170,12 +182,15 @@ class _DescriptionPageState extends State<DescriptionPage> {
                 const SizedBox(
                   height: 50,
                 ),
-                // TODO Hook up Textfield to User Notes
-                const TextField(
+                TextField(
+                  controller: notesField,
                   minLines: 3,
                   maxLines: 20,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(), hintText: 'Notes'),
+                  onChanged: (value) {
+                    db.update(id: game.id, notes: value);
+                  },
                 ),
               ],
             ),

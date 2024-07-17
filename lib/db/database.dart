@@ -8,6 +8,8 @@ import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
+import '../main.dart';
+
 part 'database.g.dart';
 
 class GameItems extends Table {
@@ -25,17 +27,13 @@ class GameItems extends Table {
 
   TextColumn get platforms => text().nullable()();
 
-  IntColumn get status => integer().nullable().references(GameCategory, #id)();
+  IntColumn get status => intEnum<Status>()();
+
+  TextColumn get notes => text().nullable()();
 //clientDefault((){return 0;})
 }
 
-class GameCategory extends Table {
-  IntColumn get id => integer().autoIncrement()();
-
-  TextColumn get statusName => text()();
-}
-
-@DriftDatabase(tables: [GameItems, GameCategory])
+@DriftDatabase(tables: [GameItems])
 class GameDB extends _$GameDB {
   GameDB() : super(_openConnection());
 
