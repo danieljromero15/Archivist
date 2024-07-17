@@ -5,6 +5,7 @@ import 'package:page_transition/page_transition.dart';
 
 import '../main.dart';
 import '../nav_bar.dart';
+import '../status.dart';
 
 class DescriptionPage extends StatefulWidget {
   //TODO Replace title with title of game
@@ -117,18 +118,18 @@ class _DescriptionPageState extends State<DescriptionPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const DropdownMenu(
+                         DropdownMenu(
                             label: Text('Status'),
-                            dropdownMenuEntries: <DropdownMenuEntry<Text>>[
+                            dropdownMenuEntries: <DropdownMenuEntry<void>>[
                               //TODO Replace Text field with Statuses List
                               DropdownMenuEntry(
-                                  value: Text('planning'), label: 'Planning'),
+                                  value: onStatusSelected(0), label: 'Planning'),
                               DropdownMenuEntry(
-                                  value: Text('playing'), label: 'Playing'),
+                                  value: onStatusSelected(1), label: 'Playing'),
                               DropdownMenuEntry(
-                                  value: Text('completed'), label: 'Completed'),
+                                  value: onStatusSelected(2), label: 'Completed'),
                               DropdownMenuEntry(
-                                  value: Text('100%'), label: '100%')
+                                  value: onStatusSelected(3), label: '100%')
                             ])
                       ],
                     ),
