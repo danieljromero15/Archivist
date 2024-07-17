@@ -31,3 +31,18 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+String getTooltip(String name, {int? unixTimestamp, int? year}) {
+  String message; // originally returned a tooltip but turns out iconbuttons don't actually use tooltips yay
+  if (unixTimestamp != null) {
+    String time = DateTime.fromMillisecondsSinceEpoch(unixTimestamp * 1000)
+        .year
+        .toString();
+    message = "$name ($time)";
+  } else if (year != null) {
+    message = "$name ($year)";
+  } else {
+    message = name;
+  }
+  return message;
+}

@@ -13,6 +13,7 @@ class IGDBApi {
   static JsonList prevResponse = [
     {'hi': "hi"}
   ];
+  static JsonList? topGames; // calls once and never again (hopefully)
 
   final protocol = 'https';
   final baseUrl = 'api.igdb.com/v4';
@@ -67,11 +68,9 @@ class IGDBApi {
     JsonList response = await post('$protocol://$baseUrl/platforms',
         headers: headers,
         // anything here needs to probably be reflected
-        body:
-        'fields name; sort id asc; limit 500;')
-    as JsonList;
+        body: 'fields name; sort id asc; limit 500;') as JsonList;
 
-    for(var platform in response){
+    for (var platform in response) {
       platforms[platform['id']] = platform['name'];
     }
   }
@@ -97,18 +96,37 @@ class IGDBApi {
     return response;
   }
 
-  String? getPlatform(int num){
-    if(platforms.isEmpty){
+  Future<JsonList> getTopGames() async {
+    if (authToken.isEmpty) {
+      await login();
+    }
+    if (topGames == null) {
+      JsonList response = await post('$protocol://$baseUrl/games',
+              headers: headers,
+              // NEEDS TO HAVE THE SAME FIELDS AS SEARCHGAMES!!! plus the extra 2 obviously
+              body:
+                  'fields name, cover, first_release_date, summary, platforms, aggregated_rating, aggregated_rating_count; sort aggregated_rating desc; where aggregated_rating_count > 13; limit 75;')
+          as JsonList;
+      //print(response);
+      topGames = response;
+      return response;
+    }
+    return topGames as JsonList;
+  }
+
+  String? getPlatform(int num) {
+    if (platforms.isEmpty) {
       return "";
     }
     return platforms[num];
   }
 
-  Future<String> getCoverUrlFromJson(Json gameJson, {String? size="720p"}) async {
+  Future<String> getCoverUrlFromJson(Json gameJson,
+      {String? size = "720p"}) async {
     return getCoverUrl(gameJson['cover'], size: size);
   }
 
-  Future<String> getCoverUrl(int coverId, {String? size="720p"}) async {
+  Future<String> getCoverUrl(int coverId, {String? size = "720p"}) async {
     if (authToken.isEmpty) {
       await login();
     }
@@ -125,11 +143,13 @@ class IGDBApi {
     return thumbUrl;
   }
 
-  Future<Map<int, String>?> getCoverUrls(gamesList, {String? size="720p"}) async {
+  Future<Map<int, String>?> getCoverUrls(gamesList,
+      {String? size = "720p"}) async {
     if (authToken.isEmpty) {
       await login();
     }
     //print(gamesList);
+    //print(gamesList.length);
     //print(gamesList.runtimeType);
     List<dynamic> coverIds = [];
     try {
@@ -144,14 +164,17 @@ class IGDBApi {
       List<int> queryInts = [];
       List<String> queryStrings = [];
       int i = 0;
-      for (int id in coverIds) {
-        queryInts.add(id);
-        i++;
+      for (var id in coverIds) {
+        //print(id.runtimeType);
+        if (id.runtimeType == int) { // filters out nulls, or no covers
+          queryInts.add(id);
+          i++;
 
-        if (i == 10) {
-          queryStrings.add(intListToQueryString(queryInts));
-          queryInts = [];
-          i = 0;
+          if (i == 10) {
+            queryStrings.add(intListToQueryString(queryInts));
+            queryInts = [];
+            i = 0;
+          }
         }
       }
       if (queryInts.isNotEmpty) {
@@ -179,7 +202,7 @@ class IGDBApi {
     }
   }
 
-  Future<String?> getArtworkUrl(int igdbID, {String? size="1080p"}) async {
+  Future<String?> getArtworkUrl(int igdbID, {String? size = "1080p"}) async {
     if (authToken.isEmpty) {
       await login();
     }
@@ -188,11 +211,11 @@ class IGDBApi {
         headers: headers,
         body: 'fields game, url; where game=($igdbID);') as JsonList;
 
-    if(response.isNotEmpty){
+    if (response.isNotEmpty) {
       String thumbUrl = '$protocol:${response[0]["url"]}';
       thumbUrl = thumbUrl.replaceFirst("t_thumb", "t_$size");
       return thumbUrl;
-    }else{
+    } else {
       return null;
     }
   }
