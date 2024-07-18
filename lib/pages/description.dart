@@ -108,96 +108,101 @@ class _DescriptionPageState extends State<DescriptionPage> {
           child: SizedBox(
             height: double.infinity,
             width: 1600,
-            child: Wrap(
-              runAlignment: WrapAlignment.start,
-              spacing: 20,
-              children: [
-                container,
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Image.network(
-                          imageUrl,
-                          scale: 3.0,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(game.name),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DropdownMenu(
-                          controller: statusDropdown,
-                            label: const Text('Status'),
-                            dropdownMenuEntries: <DropdownMenuEntry<Status>>[
-                              DropdownMenuEntry(
-                                  value: Status.planning, label: statusMap[Status.planning].toString()),
-                              DropdownMenuEntry(
-                                  value: Status.playing, label: statusMap[Status.playing].toString()),
-                              DropdownMenuEntry(
-                                  value: Status.finished, label: statusMap[Status.finished].toString()),
-                              DropdownMenuEntry(
-                                  value: Status.completed, label: statusMap[Status.completed].toString())
-                            ],
-                          onSelected: (status){
-                            db.update(id: game.id, status: status);
-                          },
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Expanded(
-                        child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(utf8.decode(gameSummary.codeUnits)),
-                        ),
-                        Column(
-                          children: [
-                            const Text('Platforms'),
-                            Card(
-                              child: Column(
-                                children: platforms,
+            child: SingleChildScrollView(
+              child: Wrap(
+                runAlignment: WrapAlignment.start,
+                spacing: 20,
+                children: [
+                  container,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Column(
+                        children: [
+                          Image.network(
+                            imageUrl,
+                            scale: 3.0,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(game.name),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          DropdownMenu(
+                            controller: statusDropdown,
+                              label: const Text('Status'),
+                              dropdownMenuEntries: <DropdownMenuEntry<Status>>[
+                                DropdownMenuEntry(
+                                    value: Status.planning, label: statusMap[Status.planning].toString()),
+                                DropdownMenuEntry(
+                                    value: Status.playing, label: statusMap[Status.playing].toString()),
+                                DropdownMenuEntry(
+                                    value: Status.finished, label: statusMap[Status.finished].toString()),
+                                DropdownMenuEntry(
+                                    value: Status.completed, label: statusMap[Status.completed].toString())
+                              ],
+                            onSelected: (status){
+                              db.update(id: game.id, status: status);
+                            },
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 30,
+                      ),
+                      Expanded(
+                          child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(utf8.decode(gameSummary.codeUnits)),
+                          ),
+                          Column(
+                            children: [
+                              const Text('Platforms'),
+                              Card(
+                                child: Column(
+                                  children: platforms,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 25,
-                            ),
-                            Text(
-                                'Release Date: ${game.releaseDate?.year}')
-                          ],
-                        ),
-                      ],
-                    )),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                TextField(
-                  controller: notesField,
-                  minLines: 3,
-                  maxLines: 20,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), hintText: 'Notes'),
-                  onChanged: (value) {
-                    db.update(id: game.id, notes: value);
-                  },
-                ),
-              ],
+                              const SizedBox(
+                                height: 25,
+                              ),
+                              Text(
+                                  'Release Date: ${game.releaseDate?.year}')
+                            ],
+                          ),
+                        ],
+                      )),
+                      const SizedBox(
+                        width: 30,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  TextField(
+                    controller: notesField,
+                    minLines: 3,
+                    maxLines: 20,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(), hintText: 'Notes'),
+                    onChanged: (value) {
+                      db.update(id: game.id, notes: value);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  )
+                ],
+              ),
             ),
           ),
         ));
