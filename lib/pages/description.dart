@@ -2,6 +2,7 @@ import 'package:archivist/db/database.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'dart:convert' show utf8;
 
 import '../db/use_database.dart';
 import '../main.dart';
@@ -11,6 +12,7 @@ class DescriptionPage extends StatefulWidget {
   const DescriptionPage({super.key, required this.game});
 
   final GameItem game;
+
 
   @override
   State<DescriptionPage> createState() => _DescriptionPageState();
@@ -78,6 +80,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
   Widget build(BuildContext context) {
     var game = widget.game;
 
+
     getGameData();
 
     // populates notes field with notes data if there already is data
@@ -85,6 +88,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
     TextEditingController statusDropdown = TextEditingController();
     if (game.notes != null) notesField.text = game.notes.toString();
     statusDropdown.text = statusMap[game.status]!;
+
+    String gameSummary = game.summary as String;
 
 
     return Scaffold(
@@ -152,7 +157,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                         child: Row(
                       children: [
                         Expanded(
-                          child: Text(game.summary as String),
+                          child: Text(utf8.decode(gameSummary.codeUnits)),
                         ),
                         Column(
                           children: [

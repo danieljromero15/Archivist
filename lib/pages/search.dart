@@ -1,3 +1,4 @@
+import 'package:archivist/db/database.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -5,6 +6,7 @@ import '../db/use_database.dart';
 import '../json_types.dart';
 import '../main.dart';
 import '../nav_bar.dart';
+import 'description.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, this.title = 'Search'});
@@ -125,17 +127,39 @@ class _SearchPageState extends State<SearchPage> {
                   children: List.generate(gamesList.length, (index) {
                     return Center(
                         //child: Image.network(coversList[index]),
-                        child: IconButton(
+                      //TODO Have status properly update when selecting option, currently only adds to database with planning status
+                        child: PopupMenuButton(
                       icon: Image.network(gamesList[index]["cover_url"]),
                       tooltip: getTooltip(gamesList[index]['name'],
                           unixTimestamp: gamesList[index]
                               ["first_release_date"]),
                       iconSize: 50,
-                      onPressed: () {
+                      onSelected: (status) {
                         //print(gamesList[index]['name']);
                         db.insert(gamesList[index]);
                       },
-                    ));
+                          itemBuilder: (BuildContext context) {
+                        return [
+                          const PopupMenuItem<Status>(
+                              value: Status.planning,
+                              child: Text('Planning')
+                          ),
+                          const PopupMenuItem(
+                              value: Status.playing,
+                              child: Text('Playing')
+                          ),
+                          const PopupMenuItem(
+                              value: Status.finished,
+                              child: Text('Completed')
+                          ),
+                          const PopupMenuItem(
+                              value: Status.completed,
+                              child: Text('100%')
+                          )
+                        ];
+                          },
+                    )
+                    );
                   }),
                 )),
               ],
