@@ -89,7 +89,9 @@ class _SearchPageState extends State<SearchPage> {
             width: 1600,
             child: Column(
               children: [
+                const SizedBox(height: 50,),
                 Wrap(
+                  spacing: 10,
                   children: [
                     SizedBox(
                       width: 800,
@@ -107,11 +109,12 @@ class _SearchPageState extends State<SearchPage> {
                         },
                       ),
                     ),
+
                     ElevatedButton(
                         //TODO add padding
-                        /*  style: ElevatedButton.styleFrom(
-                        fixedSize: Size(200, 200)
-                      ),*/
+                         style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(75, 50)
+                      ),
                         onPressed: () {
                           called = false;
                           getGames(query);
