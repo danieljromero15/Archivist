@@ -1,5 +1,8 @@
 import 'package:archivist/api/api_keys.dart';
+import 'package:archivist/pages/description.dart';
+import 'package:archivist/pages/guide.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../nav_bar.dart';
@@ -39,6 +42,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: const Icon(Icons.format_paint),
                 title: const Text('Enable custom theme'),
                 enabled: false,
+              ),
+              SettingsTile.navigation(
+                leading: const Icon(Icons.help),
+                  title: const Text('How to set up API keys'),
+              value: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(PageTransition(
+                        child: const GuidePage(),
+                    type: PageTransitionType.fade));
+                  },
+                  child: const Text('Guide')
+              ),
               ),
               SettingsTile(
                 title: const Text('I have no idea what I\'m doing'),

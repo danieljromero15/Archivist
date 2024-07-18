@@ -111,7 +111,6 @@ class _SearchPageState extends State<SearchPage> {
                     ),
 
                     ElevatedButton(
-                        //TODO add padding
                          style: ElevatedButton.styleFrom(
                         minimumSize: const Size(75, 50)
                       ),
