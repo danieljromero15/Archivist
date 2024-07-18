@@ -140,6 +140,7 @@ class _SearchPageState extends State<SearchPage> {
                       onSelected: (status) {
                         //print(gamesList[index]['name']);
                         db.insert(gamesList[index]);
+                        _showToast(context);
                       },
                           itemBuilder: (BuildContext context) {
                         return [
@@ -170,4 +171,16 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ));
   }
+
+  void _showToast(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+        SnackBar(
+          content: const Text('Added to library'),
+          action: SnackBarAction(label: 'HIDE',
+              onPressed: scaffold.hideCurrentSnackBar),
+        )
+    );
+  }
+
 }

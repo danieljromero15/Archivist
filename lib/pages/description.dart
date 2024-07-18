@@ -147,6 +147,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                               ],
                             onSelected: (status){
                               db.update(id: game.id, status: status);
+                              _showToast(context);
                             },
                           )
                         ],
@@ -207,4 +208,16 @@ class _DescriptionPageState extends State<DescriptionPage> {
           ),
         ));
   }
+
+  void _showToast(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+          content: const Text('Status set'),
+        action: SnackBarAction(label: 'HIDE',
+            onPressed: scaffold.hideCurrentSnackBar),
+      )
+    );
+  }
+
 }
