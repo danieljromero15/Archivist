@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   Status? status;
   bool called = false;
   bool received = false;
+  bool alphaOrder = false;
   List<database.GameItem> data = [];
   Map<int, String> coverUrls = <int, String>{};
 
@@ -40,11 +41,17 @@ class _HomePageState extends State<HomePage> {
     getDBData();
   }
 
-  void getDBData() async {
+  void getDBData({bool alphabeticalOrder = false}) async {
     if (!called) {
       db.getAll(status: status).then((response) {
         if (response.isNotEmpty) {
           gamesApi?.getCoverUrls(response).then((i) {
+            if (alphaOrder) {
+              response.sort((a, b) => a.name
+                  .toString()
+                  .toLowerCase()
+                  .compareTo(b.name.toString().toLowerCase()));
+            }
             setState(() {
               data = response;
               coverUrls = i!;
@@ -72,47 +79,48 @@ class _HomePageState extends State<HomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     //db().test();
-    getDBData();
+    getDBData(alphabeticalOrder: alphaOrder);
 
     //print(status);
 
     dynamic body;
 
-    if(!received){
+    if (!received) {
       body = const CircularProgressIndicator();
-    }else{
+    } else {
       body = Expanded(
         child: GridView.extent(
           maxCrossAxisExtent: 150,
           children: List.generate(coverUrls.length, (index) {
             return Center(
                 child: GestureDetector(
-                  onSecondaryTapDown: (details) {
-                    _showPopupMenu(context, details.globalPosition, data[index].id);
-                  },
-                  child: IconButton(
-                    /*style: ElevatedButton.styleFrom(
+              onSecondaryTapDown: (details) {
+                _showPopupMenu(context, details.globalPosition, data[index].id);
+              },
+              child: IconButton(
+                /*style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.transparent,
                           backgroundColor: Colors.transparent,
                           disabledForegroundColor: Colors.transparent,
                           disabledBackgroundColor: Colors.transparent,
                         ),*/
-                    onPressed: () {
-                      Navigator.of(context).push(PageTransition(
-                          child: DescriptionPage(game: data[index]),
-                          type: PageTransitionType.fade));
-                    },
-                    //icon: Image.network(coverUrls[data[index].igdbID]!),
-                    icon: CachedNetworkImage(
-                      imageUrl: coverUrls[data[index].igdbID]!,
-                      placeholder: (context, url) => const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
-                    ),
-                    iconSize: 50,
-                    tooltip: getTooltip(data[index].name,
-                        year: data[index].releaseDate?.year),
-                  ),
-                ));
+                onPressed: () {
+                  Navigator.of(context).push(PageTransition(
+                      child: DescriptionPage(game: data[index]),
+                      type: PageTransitionType.fade));
+                },
+                //icon: Image.network(coverUrls[data[index].igdbID]!),
+                icon: CachedNetworkImage(
+                  imageUrl: coverUrls[data[index].igdbID]!,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                iconSize: 50,
+                tooltip: getTooltip(data[index].name,
+                    year: data[index].releaseDate?.year),
+              ),
+            ));
           }),
         ),
       );
@@ -185,18 +193,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showPopupMenu(BuildContext context, Offset offset, int id) {
-
     showMenu(
         context: context,
-        position: RelativeRect.fromLTRB
-          (offset.dx, offset.dy, offset.dx, offset.dy),
+        position:
+            RelativeRect.fromLTRB(offset.dx, offset.dy, offset.dx, offset.dy),
         items: [
-          const PopupMenuItem(
-              value: 0,
-              child: Text('Delete')
+          const PopupMenuItem(value: 0, child: Text('Delete')
               //TODO Undo feature
-          )]
-    ).then((value) {
+              )
+        ]).then((value) {
       if (value != null) {
         _handleMenuItemClick(context, id, value);
       }
