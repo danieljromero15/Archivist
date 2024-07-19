@@ -16,7 +16,6 @@ class GuidePage extends StatefulWidget {
 class _GuidePageState extends State<GuidePage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -44,7 +43,6 @@ class _GuidePageState extends State<GuidePage> {
                 SizedBox(
                   height: 50,
                 ),
-                //TODO Add images and clean up the text to make it more presentable.
                 Text(
                   style: TextStyle(
                     fontSize: 24.0
