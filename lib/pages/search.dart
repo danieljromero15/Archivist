@@ -87,7 +87,9 @@ class _SearchPageState extends State<SearchPage> {
             width: 1600,
             child: Column(
               children: [
+                const SizedBox(height: 50,),
                 Wrap(
+                  spacing: 10,
                   children: [
                     SizedBox(
                       width: 800,
@@ -105,11 +107,11 @@ class _SearchPageState extends State<SearchPage> {
                         },
                       ),
                     ),
+
                     ElevatedButton(
-                        //TODO add padding
-                        /*  style: ElevatedButton.styleFrom(
-                        fixedSize: Size(200, 200)
-                      ),*/
+                         style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(75, 50)
+                      ),
                         onPressed: () {
                           called = false;
                           getGames(query);
@@ -125,17 +127,40 @@ class _SearchPageState extends State<SearchPage> {
                   children: List.generate(gamesList.length, (index) {
                     return Center(
                         //child: Image.network(coversList[index]),
-                        child: IconButton(
+                      //TODO Have status properly update when selecting option, currently only adds to database with planning status
+                        child: PopupMenuButton(
                       icon: Image.network(gamesList[index]["cover_url"]),
                       tooltip: getTooltip(gamesList[index]['name'],
                           unixTimestamp: gamesList[index]
                               ["first_release_date"]),
                       iconSize: 50,
-                      onPressed: () {
+                      onSelected: (status) {
                         //print(gamesList[index]['name']);
                         db.insert(gamesList[index]);
+                        showSnackBar(context, text: 'Added to library');
                       },
-                    ));
+                          itemBuilder: (BuildContext context) {
+                        return [
+                          const PopupMenuItem<Status>(
+                              value: Status.planning,
+                              child: Text('Planning')
+                          ),
+                          const PopupMenuItem(
+                              value: Status.playing,
+                              child: Text('Playing')
+                          ),
+                          const PopupMenuItem(
+                              value: Status.finished,
+                              child: Text('Completed')
+                          ),
+                          const PopupMenuItem(
+                              value: Status.completed,
+                              child: Text('100%')
+                          )
+                        ];
+                          },
+                    )
+                    );
                   }),
                 )),
               ],
