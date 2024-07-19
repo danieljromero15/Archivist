@@ -125,39 +125,39 @@ class _SearchPageState extends State<SearchPage> {
                     child: GridView.extent(
                   maxCrossAxisExtent: 150,
                   children: List.generate(gamesList.length, (index) {
-                    return Center(
-                        //child: Image.network(coversList[index]),
-                        child: PopupMenuButton(
-                      icon: Image.network(gamesList[index]["cover_url"]),
-                      tooltip: getTooltip(gamesList[index]['name'],
-                          unixTimestamp: gamesList[index]
-                              ["first_release_date"]),
-                      iconSize: 50,
-                      onSelected: (status) {
-                        //print(gamesList[index]['name']);
-                        db.insert(gamesList[index], status: status);
-                        showSnackBar(context,
-                            text:
-                                '${gamesList[index]['name']} added to library under ${statusMap[status]}',
-                            duration: Durations.extralong4);
+                    return MenuAnchor(
+                      builder: (BuildContext context, MenuController controller,
+                          Widget? child) {
+                        return IconButton(
+                          onPressed: () {
+                            if (controller.isOpen) {
+                              controller.close();
+                            } else {
+                              controller.open();
+                            }
+                          },
+                          icon: Image.network(gamesList[index]["cover_url"]),
+                          tooltip: getTooltip(gamesList[index]['name'],
+                              unixTimestamp: gamesList[index]
+                                  ["first_release_date"]),
+                          iconSize: 50,
+                        );
                       },
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          PopupMenuItem<Status>(
-                              value: Status.planning,
-                              child: Text(statusMap[Status.planning]!)),
-                          PopupMenuItem(
-                              value: Status.playing,
-                              child: Text(statusMap[Status.playing]!)),
-                          PopupMenuItem(
-                              value: Status.finished,
-                              child: Text(statusMap[Status.finished]!)),
-                          PopupMenuItem(
-                              value: Status.completed,
-                              child: Text(statusMap[Status.completed]!))
-                        ];
-                      },
-                    ));
+                      menuChildren: List<MenuItemButton>.generate(
+                          4,
+                          (int i) => MenuItemButton(
+                                onPressed: () => {
+                                  db.insert(gamesList[index],
+                                      status: Status.values[i]),
+                                  showSnackBar(context,
+                                      text:
+                                          '${gamesList[index]['name']} added to library under ${statusMap[Status.values[i]]}',
+                                      duration: Durations.extralong4),
+                                },
+                                child:
+                                    Text(statusMap.values.elementAt(i + 1)),
+                              )),
+                    );
                   }),
                 )),
               ],

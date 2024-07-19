@@ -6,7 +6,6 @@ import '../json_types.dart';
 import '../main.dart';
 
 class db {
-
   //TODO add the ability to remove a game from the database
   static void list() async {
     List<GameItem>? allItems =
@@ -14,7 +13,6 @@ class db {
     print('items in database: $allItems');
   }
 
-  // TODO add status parameter when that's implemented
   static void insert(Json game, {Status status = Status.planning}) async {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -43,8 +41,10 @@ class db {
     List<GameItem> allItems;
     if (status == null) {
       allItems = await database!.select(database!.gameItems).get();
-    }else{
-      allItems = await database!.managers.gameItems.filter((f) => f.status.equals(status)).get();
+    } else {
+      allItems = await database!.managers.gameItems
+          .filter((f) => f.status.equals(status))
+          .get();
     }
     return allItems;
   }
