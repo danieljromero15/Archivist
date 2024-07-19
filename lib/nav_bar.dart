@@ -1,7 +1,7 @@
 import 'package:archivist/pages/home.dart';
 import 'package:archivist/pages/search.dart';
 import 'package:archivist/pages/settings.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -74,7 +74,7 @@ class NavBar {
     ];
 
     // Items to only show up in debug mode
-    if (kDebugMode) {
+    if (foundation.kDebugMode) {
       var debugOptions = [
         ListTile(
             leading: const Icon(Icons.close),

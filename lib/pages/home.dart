@@ -3,7 +3,7 @@ import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../db/database.dart';
+import '../db/database.dart' as database;
 import '../db/use_database.dart';
 import '../main.dart';
 import '../nav_bar.dart';

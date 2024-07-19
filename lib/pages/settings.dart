@@ -3,6 +3,7 @@ import 'package:archivist/pages/guide.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:archivist/main.dart';
 
 import '../nav_bar.dart';
 

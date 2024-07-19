@@ -1,4 +1,4 @@
-import 'package:archivist/db/database.dart';
+import 'package:archivist/db/database.dart' as database;
 import 'package:archivist/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -11,7 +11,7 @@ import '../nav_bar.dart';
 class DescriptionPage extends StatefulWidget {
   const DescriptionPage({super.key, required this.game});
 
-  final GameItem game;
+  final database.GameItem game;
 
   @override
   State<DescriptionPage> createState() => _DescriptionPageState();
