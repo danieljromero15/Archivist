@@ -64,11 +64,11 @@ String getTooltip(String name, {int? unixTimestamp, int? year}) {
   return message;
 }
 
-void showSnackBar(BuildContext context, {required String text}) {
+void showSnackBar(BuildContext context, {required String text, Duration duration = Durations.long4}) {
   final scaffold = ScaffoldMessenger.of(context);
   scaffold.showSnackBar(SnackBar(
     content: Text(text),
-    action:
-        SnackBarAction(label: 'HIDE', onPressed: scaffold.hideCurrentSnackBar),
+    duration: duration,
+    showCloseIcon: true,
   ));
 }

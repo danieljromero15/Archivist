@@ -148,7 +148,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                             ],
                             onSelected: (status) {
                               db.update(id: game.id, status: status);
-                              showSnackBar(context, text: 'Status set');
+                              showSnackBar(context,
+                                  text: 'Status set to ${statusMap[status]}');
                             },
                           )
                         ],

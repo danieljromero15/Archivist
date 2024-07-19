@@ -127,7 +127,6 @@ class _SearchPageState extends State<SearchPage> {
                   children: List.generate(gamesList.length, (index) {
                     return Center(
                         //child: Image.network(coversList[index]),
-                        //TODO Have status properly update when selecting option, currently only adds to database with planning status
                         child: PopupMenuButton(
                       icon: Image.network(gamesList[index]["cover_url"]),
                       tooltip: getTooltip(gamesList[index]['name'],
@@ -136,19 +135,26 @@ class _SearchPageState extends State<SearchPage> {
                       iconSize: 50,
                       onSelected: (status) {
                         //print(gamesList[index]['name']);
-                        db.insert(gamesList[index]);
-                        showSnackBar(context, text: 'Added to library');
+                        db.insert(gamesList[index], status: status);
+                        showSnackBar(context,
+                            text:
+                                '${gamesList[index]['name']} added to library under ${statusMap[status]}',
+                            duration: Durations.extralong4);
                       },
                       itemBuilder: (BuildContext context) {
                         return [
-                          const PopupMenuItem<Status>(
-                              value: Status.planning, child: Text('Planning')),
-                          const PopupMenuItem(
-                              value: Status.playing, child: Text('Playing')),
-                          const PopupMenuItem(
-                              value: Status.finished, child: Text('Completed')),
-                          const PopupMenuItem(
-                              value: Status.completed, child: Text('100%'))
+                          PopupMenuItem<Status>(
+                              value: Status.planning,
+                              child: Text(statusMap[Status.planning]!)),
+                          PopupMenuItem(
+                              value: Status.playing,
+                              child: Text(statusMap[Status.playing]!)),
+                          PopupMenuItem(
+                              value: Status.finished,
+                              child: Text(statusMap[Status.finished]!)),
+                          PopupMenuItem(
+                              value: Status.completed,
+                              child: Text(statusMap[Status.completed]!))
                         ];
                       },
                     ));
