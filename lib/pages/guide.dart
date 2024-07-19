@@ -1,5 +1,7 @@
 import 'package:archivist/nav_bar.dart';
+import 'package:archivist/pages/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class GuidePage extends StatefulWidget {
   const GuidePage({super.key, this.title = 'API Keys Guide'});
@@ -15,8 +17,22 @@ class _GuidePageState extends State<GuidePage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: NavBar().buildAppBar(context, widget.title), // TODO change button in navdrawer to go back to settings instead of drawer
-      drawer: NavBar().buildDrawer(context),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+                icon: const Icon(Icons.arrow_back),
+                tooltip: "Back to settings",
+                onPressed: () {
+                  Navigator.of(context).push(PageTransition(
+                      child: const SettingsPage(),
+                      type: PageTransitionType.fade));
+                });
+          },
+        ),
+      ), // TODO change button in navdrawer to go back to settings instead of drawer
       body: const Align(
         alignment: Alignment.topCenter,
         child: Column(
