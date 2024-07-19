@@ -86,27 +86,32 @@ class _HomePageState extends State<HomePage> {
           maxCrossAxisExtent: 150,
           children: List.generate(coverUrls.length, (index) {
             return Center(
-                child: IconButton(
-                  /*style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        disabledForegroundColor: Colors.transparent,
-                        disabledBackgroundColor: Colors.transparent,
-                      ),*/
-                  onPressed: () {
-                    Navigator.of(context).push(PageTransition(
-                        child: DescriptionPage(game: data[index]),
-                        type: PageTransitionType.fade));
+                child: GestureDetector(
+                  onSecondaryTapDown: (details) {
+                    _showPopupMenu(context, details.globalPosition, data[index].id);
                   },
-                  //icon: Image.network(coverUrls[data[index].igdbID]!),
-                  icon: CachedNetworkImage(
-                    imageUrl: coverUrls[data[index].igdbID]!,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                  child: IconButton(
+                    /*style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.transparent,
+                          backgroundColor: Colors.transparent,
+                          disabledForegroundColor: Colors.transparent,
+                          disabledBackgroundColor: Colors.transparent,
+                        ),*/
+                    onPressed: () {
+                      Navigator.of(context).push(PageTransition(
+                          child: DescriptionPage(game: data[index]),
+                          type: PageTransitionType.fade));
+                    },
+                    //icon: Image.network(coverUrls[data[index].igdbID]!),
+                    icon: CachedNetworkImage(
+                      imageUrl: coverUrls[data[index].igdbID]!,
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                    ),
+                    iconSize: 50,
+                    tooltip: getTooltip(data[index].name,
+                        year: data[index].releaseDate?.year),
                   ),
-                  iconSize: 50,
-                  tooltip: getTooltip(data[index].name,
-                      year: data[index].releaseDate?.year),
                 ));
           }),
         ),
@@ -177,5 +182,30 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.search),
       ),
     );
+  }
+
+  void _showPopupMenu(BuildContext context, Offset offset, int id) {
+
+    showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB
+          (offset.dx, offset.dy, offset.dx, offset.dy),
+        items: [
+          const PopupMenuItem(
+              value: 0,
+              child: Text('Delete')
+              //TODO Undo feature
+          )]
+    ).then((value) {
+      if (value != null) {
+        _handleMenuItemClick(context, id, value);
+      }
+    });
+  }
+
+  _handleMenuItemClick(BuildContext context, int id, int value) {
+    db.delete(id: id);
+    changePage(status);
+    showSnackBar(context, text: 'Deleted from library');
   }
 }
