@@ -143,26 +143,18 @@ class _HomePageState extends State<HomePage> {
                 alignment: WrapAlignment.spaceEvenly,
                 children: [
                   DropdownButton(
-                    focusColor: Theme.of(context).scaffoldBackgroundColor,
-                    icon: const Icon(Icons.sort),
+                      focusColor: Theme.of(context).scaffoldBackgroundColor,
+                      icon: const Icon(Icons.sort),
                       hint: const Text("Sort"),
-
-                      items: [
-                        DropdownMenuItem(
-                            value: 0,
-                            child: const Text('On changed')
-                        ),
-                        DropdownMenuItem(
-                            value: 1,
-                            child: const Text('Alphabetical')
-                        ),
+                      items: const [
+                        DropdownMenuItem(value: 0, child: Text('Last Added')),
+                        DropdownMenuItem(value: 1, child: Text('Alphabetical')),
                       ],
                       onChanged: (value) {
-                      setState(() {
-                        _handleSortListOutput(context, value!);
-                      });
-                      }
-                  ),
+                        setState(() {
+                          _handleSortListOutput(context, value!);
+                        });
+                      }),
                   ElevatedButton(
                       onPressed: () {
                         changePage(null);
@@ -237,18 +229,25 @@ class _HomePageState extends State<HomePage> {
 
   //TODO Fill this function
   _handleSortListOutput(BuildContext context, int output) {
-    switch(output) {
+    switch (output) {
       case 0:
         //code
+        setState(() {
+          alphaOrder = false;
+        });
+        changePage(status);
         showSnackBar(context, text: 'Sorted by Last Added');
         break;
       case 1:
         //code
+        setState(() {
+          alphaOrder = true;
+        });
+        changePage(status);
         showSnackBar(context, text: 'Sorted Alphabetically');
         break;
       default:
         break;
     }
   }
-
 }
