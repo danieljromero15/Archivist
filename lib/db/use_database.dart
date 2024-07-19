@@ -12,7 +12,7 @@ class db {
     print('items in database: $allItems');
   }
 
-  static void insert(Json game, {Status status = Status.planning}) async {
+  static Future<bool> insert(Json game, {Status status = Status.planning}) async {
     WidgetsFlutterBinding.ensureInitialized();
 
     if (!(await database!.managers.gameItems
@@ -31,8 +31,10 @@ class db {
             status: status,
           ));
       //list();
+      return true;
     } else {
-      print("Error: entry already exists"); //TODO show this on frontend
+      print("Error: entry already exists");
+      return false;
     }
   }
 

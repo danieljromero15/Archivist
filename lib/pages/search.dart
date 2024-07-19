@@ -31,7 +31,8 @@ class _SearchPageState extends State<SearchPage> {
       } else {
         gamesApi?.searchGames(query, limit: 50).then((r) {
           if (r.isEmpty) {
-            showSnackBar(context, text: "No games found", duration: Durations.extralong4);
+            showSnackBar(context,
+                text: "No games found", duration: Durations.extralong4);
           }
           setCoverUrls(r);
         });
@@ -63,6 +64,20 @@ class _SearchPageState extends State<SearchPage> {
         });
       }
     });
+  }
+
+  insert(game, {required dynamic context, required Status status}) async {
+    bool insert = await db.insert(game, status: status);
+
+    String snackMessage;
+    if (insert) {
+      snackMessage =
+          '${game['name']} added to library under ${statusMap[status]}';
+    } else {
+      snackMessage = 'Error: ${game['name']} is already in your library!';
+    }
+
+    showSnackBar(context, text: snackMessage, duration: Durations.extralong4);
   }
 
   @override
@@ -147,15 +162,11 @@ class _SearchPageState extends State<SearchPage> {
                           4,
                           (int i) => MenuItemButton(
                                 onPressed: () => {
-                                  db.insert(gamesList[index],
-                                      status: Status.values[i]),
-                                  showSnackBar(context,
-                                      text:
-                                          '${gamesList[index]['name']} added to library under ${statusMap[Status.values[i]]}',
-                                      duration: Durations.extralong4),
+                                  insert(gamesList[index],
+                                      status: Status.values[i],
+                                      context: context),
                                 },
-                                child:
-                                    Text(statusMap.values.elementAt(i + 1)),
+                                child: Text(statusMap.values.elementAt(i + 1)),
                               )),
                     );
                   }),
