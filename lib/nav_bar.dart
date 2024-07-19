@@ -1,6 +1,6 @@
 import 'package:archivist/pages/home.dart';
 import 'package:archivist/pages/search.dart';
-import 'package:archivist/pages/settings_page.dart';
+import 'package:archivist/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
