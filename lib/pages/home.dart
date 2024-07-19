@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Status? status;
   bool called = false;
-  List<GameItem> data = [];
+  List<database.GameItem> data = [];
   Map<int, String> coverUrls = <int, String>{};
 
   void changePage(Status? status) {

@@ -15,7 +15,7 @@ class _GuidePageState extends State<GuidePage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: NavBar().buildAppBar(context, widget.title),
+      appBar: NavBar().buildAppBar(context, widget.title), // TODO change button in navdrawer to go back to settings instead of drawer
       drawer: NavBar().buildDrawer(context),
       body: const Align(
         alignment: Alignment.topCenter,

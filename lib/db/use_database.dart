@@ -79,7 +79,7 @@ class db {
 
   static Future<void> update(
       {required int id, Status? status, String? notes}) async {
-    $$GameItemsTableProcessedTableManager game =
+    var game =
         database!.managers.gameItems.filter((f) => f.id.isIn([id]));
 
     if (status != null) {
