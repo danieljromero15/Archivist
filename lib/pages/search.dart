@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -17,6 +18,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   bool called = false;
+  bool received = false;
   JsonList gamesList = [];
   String topText = "Top Games";
   String query = ''; // literally only used for search button right now lol
@@ -31,7 +33,8 @@ class _SearchPageState extends State<SearchPage> {
       } else {
         gamesApi?.searchGames(query, limit: 50).then((r) {
           if (r.isEmpty) {
-            showSnackBar(context, text: "No games found", duration: Durations.extralong4);
+            showSnackBar(context,
+                text: "No games found", duration: Durations.extralong4);
           }
           setCoverUrls(r);
         });
@@ -60,15 +63,84 @@ class _SearchPageState extends State<SearchPage> {
 
         setState(() {
           this.gamesList = gamesList;
+          received = true;
         });
       }
     });
+  }
+
+  insert(game, {required dynamic context, required Status status}) async {
+    bool insert = await db.insert(game, status: status);
+
+    String snackMessage;
+    if (insert) {
+      snackMessage =
+          '${game['name']} added to library under ${statusMap[status]}';
+    } else {
+      snackMessage = 'Error: ${game['name']} is already in your library!';
+    }
+
+    showSnackBar(context, text: snackMessage, duration: Durations.extralong4);
+  }
+
+  void search(){
+    setState(() {
+      called = false;
+      received = false;
+    });
+    getGames(query);
   }
 
   @override
   Widget build(BuildContext context) {
     //gamesApi.test();
     getGames(null);
+
+    dynamic body;
+
+    if (!received) {
+      body = const CircularProgressIndicator();
+    } else {
+      body = Expanded(
+          child: GridView.extent(
+        maxCrossAxisExtent: 150,
+        children: List.generate(gamesList.length, (index) {
+          return MenuAnchor(
+            builder: (BuildContext context, MenuController controller,
+                Widget? child) {
+              return IconButton(
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+                //icon: Image.network(gamesList[index]["cover_url"]),
+                icon: CachedNetworkImage(
+                  imageUrl: gamesList[index]["cover_url"],
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                tooltip: getTooltip(gamesList[index]['name'],
+                    unixTimestamp: gamesList[index]["first_release_date"]),
+                iconSize: 50,
+              );
+            },
+            menuChildren: List<MenuItemButton>.generate(
+                4,
+                (int i) => MenuItemButton(
+                      onPressed: () => {
+                        insert(gamesList[index],
+                            status: Status.values[i], context: context),
+                      },
+                      child: Text(statusMap.values.elementAt(i + 1)),
+                    )),
+          );
+        }),
+      ));
+    }
 
     return Scaffold(
         appBar: NavBar().buildAppBar(context, widget.title),
@@ -101,8 +173,7 @@ class _SearchPageState extends State<SearchPage> {
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(), hintText: 'search'),
                         onSubmitted: (value) {
-                          called = false;
-                          getGames(value);
+                          search();
                         },
                         onChanged: (value) {
                           query = value;
@@ -113,53 +184,14 @@ class _SearchPageState extends State<SearchPage> {
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size(75, 50)),
                         onPressed: () {
-                          called = false;
-                          getGames(query);
+                          search();
                         },
                         child: const Icon(Icons.search))
                   ],
                 ),
                 const SizedBox(height: 50),
                 Align(alignment: Alignment.centerLeft, child: Text(topText)),
-                Expanded(
-                    child: GridView.extent(
-                  maxCrossAxisExtent: 150,
-                  children: List.generate(gamesList.length, (index) {
-                    return MenuAnchor(
-                      builder: (BuildContext context, MenuController controller,
-                          Widget? child) {
-                        return IconButton(
-                          onPressed: () {
-                            if (controller.isOpen) {
-                              controller.close();
-                            } else {
-                              controller.open();
-                            }
-                          },
-                          icon: Image.network(gamesList[index]["cover_url"]),
-                          tooltip: getTooltip(gamesList[index]['name'],
-                              unixTimestamp: gamesList[index]
-                                  ["first_release_date"]),
-                          iconSize: 50,
-                        );
-                      },
-                      menuChildren: List<MenuItemButton>.generate(
-                          4,
-                          (int i) => MenuItemButton(
-                                onPressed: () => {
-                                  db.insert(gamesList[index],
-                                      status: Status.values[i]),
-                                  showSnackBar(context,
-                                      text:
-                                          '${gamesList[index]['name']} added to library under ${statusMap[Status.values[i]]}',
-                                      duration: Durations.extralong4),
-                                },
-                                child:
-                                    Text(statusMap.values.elementAt(i + 1)),
-                              )),
-                    );
-                  }),
-                )),
+                body,
               ],
             ),
           ),

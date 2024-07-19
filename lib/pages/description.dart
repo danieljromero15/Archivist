@@ -1,5 +1,6 @@
 import 'package:archivist/db/database.dart' as database;
 import 'package:archivist/pages/search.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'dart:convert' show utf8;
@@ -19,8 +20,7 @@ class DescriptionPage extends StatefulWidget {
 
 class _DescriptionPageState extends State<DescriptionPage> {
   bool called = false;
-  String imageUrl =
-      "https://placehold.co/1080x1920/png"; // TODO replace with loading? idk
+  dynamic coverImageContainer = Container();
   Container container = Container(
     height: 100,
     width: double.infinity,
@@ -38,7 +38,12 @@ class _DescriptionPageState extends State<DescriptionPage> {
     if (!called) {
       gamesApi?.getCoverUrl(widget.game.cover!, size: "1080p").then((url) {
         setState(() {
-          imageUrl = url;
+          coverImageContainer = CachedNetworkImage(
+            imageUrl: url,
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            height: 500,
+          );
         });
         //print(imageUrl);
       });
@@ -118,10 +123,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                     children: [
                       Column(
                         children: [
-                          Image.network(
-                            imageUrl,
-                            scale: 3.0,
-                          ),
+                          coverImageContainer,
                           const SizedBox(
                             height: 10,
                           ),

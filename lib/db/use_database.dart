@@ -6,14 +6,13 @@ import '../json_types.dart';
 import '../main.dart';
 
 class db {
-  //TODO add the ability to remove a game from the database
   static void list() async {
     List<GameItem>? allItems =
         await database!.select(database!.gameItems).get();
     print('items in database: $allItems');
   }
 
-  static void insert(Json game, {Status status = Status.planning}) async {
+  static Future<bool> insert(Json game, {Status status = Status.planning}) async {
     WidgetsFlutterBinding.ensureInitialized();
 
     if (!(await database!.managers.gameItems
@@ -32,8 +31,10 @@ class db {
             status: status,
           ));
       //list();
+      return true;
     } else {
       print("Error: entry already exists");
+      return false;
     }
   }
 
@@ -79,8 +80,7 @@ class db {
 
   static Future<void> update(
       {required int id, Status? status, String? notes}) async {
-    var game =
-        database!.managers.gameItems.filter((f) => f.id.isIn([id]));
+    var game = database!.managers.gameItems.filter((f) => f.id.isIn([id]));
 
     if (status != null) {
       await game.update((o) => o(status: Value(status)));
@@ -91,8 +91,34 @@ class db {
     }
   }
 
+  static Future<void> delete(
+      {int? id,
+      int? igdbID,
+      String? name,
+      DateTime? releaseDate,
+      int? coverId}) async {
+    var gameItems = database!.managers.gameItems;
+
+    if (id != null) {
+      await gameItems.filter((f) => f.id.isIn([id])).delete();
+    }
+    if (igdbID != null) {
+      await gameItems.filter((f) => f.igdbID.isIn([igdbID])).delete();
+    }
+    if (name != null) {
+      await gameItems.filter((f) => f.name.equals(name)).delete();
+    }
+    if (releaseDate != null) {
+      await gameItems.filter((f) => f.releaseDate.equals(releaseDate)).delete();
+    }
+    if (coverId != null) {
+      await gameItems.filter((f) => f.cover.isIn([coverId])).delete();
+    }
+  }
+
   static void deleteAll() async {
-    WidgetsFlutterBinding.ensureInitialized();
+    WidgetsFlutterBinding
+        .ensureInitialized(); // no idea why I put this here but I'm afraid removing it will break something
     await database!.managers.gameItems.delete();
     print("Database cleared!");
     list();
