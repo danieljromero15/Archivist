@@ -51,7 +51,7 @@ class _SearchPageState extends State<SearchPage> {
     //TODO generate text covers if no image (replace removewhere?)
     //setCoverUrls
     //if (coversList.isNotEmpty) coversList.clear();
-    gamesApi?.getCoverUrls(gamesList, size: "cover_big").then((urls) {
+    gamesApi?.getCoverUrls(gamesList).then((urls) {
       if (urls != null) {
         for (dynamic game in gamesList) {
           if (urls.containsKey(game['id'])) {
