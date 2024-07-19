@@ -142,6 +142,27 @@ class _HomePageState extends State<HomePage> {
                 spacing: 10.0,
                 alignment: WrapAlignment.spaceEvenly,
                 children: [
+                  DropdownButton(
+                    focusColor: Theme.of(context).scaffoldBackgroundColor,
+                    icon: const Icon(Icons.sort),
+                      hint: const Text("Sort"),
+
+                      items: [
+                        DropdownMenuItem(
+                            value: 0,
+                            child: const Text('On changed')
+                        ),
+                        DropdownMenuItem(
+                            value: 1,
+                            child: const Text('Alphabetical')
+                        ),
+                      ],
+                      onChanged: (value) {
+                      setState(() {
+                        _handleSortListOutput(context, value!);
+                      });
+                      }
+                  ),
                   ElevatedButton(
                       onPressed: () {
                         changePage(null);
@@ -213,4 +234,21 @@ class _HomePageState extends State<HomePage> {
     changePage(status);
     showSnackBar(context, text: 'Deleted from library');
   }
+
+  //TODO Fill this function
+  _handleSortListOutput(BuildContext context, int output) {
+    switch(output) {
+      case 0:
+        //code
+        showSnackBar(context, text: 'Sorted by Last Added');
+        break;
+      case 1:
+        //code
+        showSnackBar(context, text: 'Sorted Alphabetically');
+        break;
+      default:
+        break;
+    }
+  }
+
 }
