@@ -1,4 +1,3 @@
-import 'package:archivist/db/database.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -6,7 +5,6 @@ import '../db/use_database.dart';
 import '../json_types.dart';
 import '../main.dart';
 import '../nav_bar.dart';
-import 'description.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, this.title = 'Search'});
@@ -139,7 +137,7 @@ class _SearchPageState extends State<SearchPage> {
                       onSelected: (status) {
                         //print(gamesList[index]['name']);
                         db.insert(gamesList[index]);
-                        _showToast(context);
+                        showSnackBar(context, text: 'Added to library');
                       },
                           itemBuilder: (BuildContext context) {
                         return [
@@ -170,16 +168,4 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ));
   }
-
-  void _showToast(BuildContext context) {
-    final scaffold = ScaffoldMessenger.of(context);
-    scaffold.showSnackBar(
-        SnackBar(
-          content: const Text('Added to library'),
-          action: SnackBarAction(label: 'HIDE',
-              onPressed: scaffold.hideCurrentSnackBar),
-        )
-    );
-  }
-
 }
