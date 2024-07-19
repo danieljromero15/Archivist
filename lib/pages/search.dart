@@ -31,7 +31,7 @@ class _SearchPageState extends State<SearchPage> {
       } else {
         gamesApi?.searchGames(query, limit: 50).then((r) {
           if (r.isEmpty) {
-            //TODO a toast about no games found or something
+            showSnackBar(context, text: "No games found", duration: Durations.extralong4);
           }
           setCoverUrls(r);
         });
