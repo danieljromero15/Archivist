@@ -32,7 +32,7 @@ class _GuidePageState extends State<GuidePage> {
                 });
           },
         ),
-      ), // TODO change button in navdrawer to go back to settings instead of drawer
+      ),
       body: const Align(
         alignment: Alignment.topCenter,
         child: Column(
