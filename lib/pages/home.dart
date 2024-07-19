@@ -1,5 +1,6 @@
 import 'package:archivist/pages/description.dart';
 import 'package:archivist/pages/search.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -29,6 +30,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Status? status;
   bool called = false;
+  bool received = false;
   List<database.GameItem> data = [];
   Map<int, String> coverUrls = <int, String>{};
 
@@ -46,12 +48,14 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               data = response;
               coverUrls = i!;
+              received = true;
             });
           });
-        }else{
+        } else {
           setState(() {
             data = response;
             coverUrls.clear();
+            received = true;
           });
         }
       });
@@ -71,6 +75,43 @@ class _HomePageState extends State<HomePage> {
     getDBData();
 
     //print(status);
+
+    dynamic body;
+
+    if(!received){
+      body = const CircularProgressIndicator();
+    }else{
+      body = Expanded(
+        child: GridView.extent(
+          maxCrossAxisExtent: 150,
+          children: List.generate(coverUrls.length, (index) {
+            return Center(
+                child: IconButton(
+                  /*style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.transparent,
+                        backgroundColor: Colors.transparent,
+                        disabledForegroundColor: Colors.transparent,
+                        disabledBackgroundColor: Colors.transparent,
+                      ),*/
+                  onPressed: () {
+                    Navigator.of(context).push(PageTransition(
+                        child: DescriptionPage(game: data[index]),
+                        type: PageTransitionType.fade));
+                  },
+                  //icon: Image.network(coverUrls[data[index].igdbID]!),
+                  icon: CachedNetworkImage(
+                    imageUrl: coverUrls[data[index].igdbID]!,
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                  ),
+                  iconSize: 50,
+                  tooltip: getTooltip(data[index].name,
+                      year: data[index].releaseDate?.year),
+                ));
+          }),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: NavBar().buildAppBar(context, widget.title),
@@ -122,31 +163,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 10,
               ),
-              Expanded(
-                child: GridView.extent(
-                  maxCrossAxisExtent: 150,
-                  children: List.generate(coverUrls.length, (index) {
-                    return Center(
-                        child: IconButton(
-                      /*style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        disabledForegroundColor: Colors.transparent,
-                        disabledBackgroundColor: Colors.transparent,
-                      ),*/
-                      onPressed: () {
-                        Navigator.of(context).push(PageTransition(
-                            child: DescriptionPage(game: data[index]),
-                            type: PageTransitionType.fade));
-                      },
-                      icon: Image.network(coverUrls[data[index].igdbID]!),
-                      iconSize: 50,
-                      tooltip: getTooltip(data[index].name,
-                          year: data[index].releaseDate?.year),
-                    ));
-                  }),
-                ),
-              )
+              body,
             ],
           ),
         ),
