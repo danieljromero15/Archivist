@@ -49,7 +49,8 @@ class MyApp extends StatelessWidget {
 }
 
 String getTooltip(String name, {int? unixTimestamp, int? year}) {
-  String message; // originally returned a tooltip but turns out iconbuttons don't actually use tooltips yay
+  String
+      message; // originally returned a tooltip but turns out iconbuttons don't actually use tooltips yay
   if (unixTimestamp != null) {
     String time = DateTime.fromMillisecondsSinceEpoch(unixTimestamp * 1000)
         .year
@@ -65,11 +66,9 @@ String getTooltip(String name, {int? unixTimestamp, int? year}) {
 
 void showSnackBar(BuildContext context, {required String text}) {
   final scaffold = ScaffoldMessenger.of(context);
-  scaffold.showSnackBar(
-      SnackBar(
-        content: Text(text),
-        action: SnackBarAction(label: 'HIDE',
-            onPressed: scaffold.hideCurrentSnackBar),
-      )
-  );
+  scaffold.showSnackBar(SnackBar(
+    content: Text(text),
+    action:
+        SnackBarAction(label: 'HIDE', onPressed: scaffold.hideCurrentSnackBar),
+  ));
 }

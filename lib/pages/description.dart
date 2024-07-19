@@ -13,7 +13,6 @@ class DescriptionPage extends StatefulWidget {
 
   final GameItem game;
 
-
   @override
   State<DescriptionPage> createState() => _DescriptionPageState();
 }
@@ -80,7 +79,6 @@ class _DescriptionPageState extends State<DescriptionPage> {
   Widget build(BuildContext context) {
     var game = widget.game;
 
-
     getGameData();
 
     // populates notes field with notes data if there already is data
@@ -90,7 +88,6 @@ class _DescriptionPageState extends State<DescriptionPage> {
     statusDropdown.text = statusMap[game.status]!;
 
     String gameSummary = game.summary as String;
-
 
     return Scaffold(
         appBar: NavBar().buildAppBar(context, game.name),
@@ -134,18 +131,22 @@ class _DescriptionPageState extends State<DescriptionPage> {
                           ),
                           DropdownMenu(
                             controller: statusDropdown,
-                              label: const Text('Status'),
-                              dropdownMenuEntries: <DropdownMenuEntry<Status>>[
-                                DropdownMenuEntry(
-                                    value: Status.planning, label: statusMap[Status.planning].toString()),
-                                DropdownMenuEntry(
-                                    value: Status.playing, label: statusMap[Status.playing].toString()),
-                                DropdownMenuEntry(
-                                    value: Status.finished, label: statusMap[Status.finished].toString()),
-                                DropdownMenuEntry(
-                                    value: Status.completed, label: statusMap[Status.completed].toString())
-                              ],
-                            onSelected: (status){
+                            label: const Text('Status'),
+                            dropdownMenuEntries: <DropdownMenuEntry<Status>>[
+                              DropdownMenuEntry(
+                                  value: Status.planning,
+                                  label: statusMap[Status.planning].toString()),
+                              DropdownMenuEntry(
+                                  value: Status.playing,
+                                  label: statusMap[Status.playing].toString()),
+                              DropdownMenuEntry(
+                                  value: Status.finished,
+                                  label: statusMap[Status.finished].toString()),
+                              DropdownMenuEntry(
+                                  value: Status.completed,
+                                  label: statusMap[Status.completed].toString())
+                            ],
+                            onSelected: (status) {
                               db.update(id: game.id, status: status);
                               showSnackBar(context, text: 'Status set');
                             },
@@ -172,8 +173,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                               const SizedBox(
                                 height: 25,
                               ),
-                              Text(
-                                  'Release Date: ${game.releaseDate?.year}')
+                              Text('Release Date: ${game.releaseDate?.year}')
                             ],
                           ),
                         ],
