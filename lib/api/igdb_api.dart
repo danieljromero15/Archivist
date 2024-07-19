@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
 
 import '../json_types.dart';
-import 'api_keys.dart';
 
 class IGDBApi {
   static String authToken = '';
@@ -51,11 +51,11 @@ class IGDBApi {
 
   Future<void> login() async {
     Json response = await post(
-            'https://id.twitch.tv/oauth2/token?client_id=$igdbApiKey&client_secret=$igdbApiSecret&grant_type=client_credentials')
+            'https://id.twitch.tv/oauth2/token?client_id=${Settings.getValue<String>('APIKey', defaultValue: '')}&client_secret=${Settings.getValue<String>('APISecret', defaultValue: '')}&grant_type=client_credentials')
         as Json;
     authToken = response['access_token'];
     headers = {
-      "Client-ID": igdbApiKey,
+      "Client-ID": Settings.getValue<String>('APIKey', defaultValue: '').toString(),
       "Authorization": 'Bearer $authToken',
     };
   }
@@ -166,7 +166,8 @@ class IGDBApi {
       int i = 0;
       for (var id in coverIds) {
         //print(id.runtimeType);
-        if (id.runtimeType == int) { // filters out nulls, or no covers
+        if (id.runtimeType == int) {
+          // filters out nulls, or no covers
           queryInts.add(id);
           i++;
 
@@ -224,14 +225,21 @@ class IGDBApi {
     return list.toString().replaceFirst("[", "(").replaceFirst("]", ")");
   }
 
-  void test() async {
-    print('testing');
-    login();
-    JsonList gamesList = await searchGames("Halo");
-    //print(gamesList);
-    print(getCoverUrls(gamesList));
-    //getCoverUrl(gamesList[0]);
-    //String coverUrl = await getCoverUrl(gamesList[0]);
-    //print(coverUrl);
+  Future<bool> test() async {
+    try {
+      //print('testing');
+      if (authToken.isEmpty) {
+        await login();
+      }
+
+      await post('$protocol://$baseUrl/games',
+          headers: headers,)
+      as JsonList;
+      //print("test response $response");
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

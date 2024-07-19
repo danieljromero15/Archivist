@@ -6,15 +6,14 @@ import '../json_types.dart';
 import '../main.dart';
 
 class db {
-
+  //TODO add the ability to remove a game from the database
   static void list() async {
     List<GameItem>? allItems =
         await database!.select(database!.gameItems).get();
     print('items in database: $allItems');
   }
 
-  // TODO add status parameter when that's implemented
-  static void insert(Json game) async {
+  static void insert(Json game, {Status status = Status.planning}) async {
     WidgetsFlutterBinding.ensureInitialized();
 
     if (!(await database!.managers.gameItems
@@ -30,7 +29,7 @@ class db {
             cover: Value(game['cover']),
             summary: Value(game['summary']),
             platforms: Value(game['platforms'].toString()),
-            status: Status.planning,
+            status: status,
           ));
       //list();
     } else {
@@ -42,8 +41,10 @@ class db {
     List<GameItem> allItems;
     if (status == null) {
       allItems = await database!.select(database!.gameItems).get();
-    }else{
-      allItems = await database!.managers.gameItems.filter((f) => f.status.equals(status)).get();
+    } else {
+      allItems = await database!.managers.gameItems
+          .filter((f) => f.status.equals(status))
+          .get();
     }
     return allItems;
   }
@@ -78,7 +79,7 @@ class db {
 
   static Future<void> update(
       {required int id, Status? status, String? notes}) async {
-    $$GameItemsTableProcessedTableManager game =
+    var game =
         database!.managers.gameItems.filter((f) => f.id.isIn([id]));
 
     if (status != null) {

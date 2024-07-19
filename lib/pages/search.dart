@@ -31,7 +31,7 @@ class _SearchPageState extends State<SearchPage> {
       } else {
         gamesApi?.searchGames(query, limit: 50).then((r) {
           if (r.isEmpty) {
-            //TODO a toast about no games found or something
+            showSnackBar(context, text: "No games found", duration: Durations.extralong4);
           }
           setCoverUrls(r);
         });
@@ -87,7 +87,9 @@ class _SearchPageState extends State<SearchPage> {
             width: 1600,
             child: Column(
               children: [
-                const SizedBox(height: 50,),
+                const SizedBox(
+                  height: 50,
+                ),
                 Wrap(
                   spacing: 10,
                   children: [
@@ -107,11 +109,9 @@ class _SearchPageState extends State<SearchPage> {
                         },
                       ),
                     ),
-
                     ElevatedButton(
-                         style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(75, 50)
-                      ),
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(75, 50)),
                         onPressed: () {
                           called = false;
                           getGames(query);
@@ -125,41 +125,38 @@ class _SearchPageState extends State<SearchPage> {
                     child: GridView.extent(
                   maxCrossAxisExtent: 150,
                   children: List.generate(gamesList.length, (index) {
-                    return Center(
-                        //child: Image.network(coversList[index]),
-                      //TODO Have status properly update when selecting option, currently only adds to database with planning status
-                        child: PopupMenuButton(
-                      icon: Image.network(gamesList[index]["cover_url"]),
-                      tooltip: getTooltip(gamesList[index]['name'],
-                          unixTimestamp: gamesList[index]
-                              ["first_release_date"]),
-                      iconSize: 50,
-                      onSelected: (status) {
-                        //print(gamesList[index]['name']);
-                        db.insert(gamesList[index]);
-                        showSnackBar(context, text: 'Added to library');
-                      },
-                          itemBuilder: (BuildContext context) {
-                        return [
-                          const PopupMenuItem<Status>(
-                              value: Status.planning,
-                              child: Text('Planning')
-                          ),
-                          const PopupMenuItem(
-                              value: Status.playing,
-                              child: Text('Playing')
-                          ),
-                          const PopupMenuItem(
-                              value: Status.finished,
-                              child: Text('Completed')
-                          ),
-                          const PopupMenuItem(
-                              value: Status.completed,
-                              child: Text('100%')
-                          )
-                        ];
+                    return MenuAnchor(
+                      builder: (BuildContext context, MenuController controller,
+                          Widget? child) {
+                        return IconButton(
+                          onPressed: () {
+                            if (controller.isOpen) {
+                              controller.close();
+                            } else {
+                              controller.open();
+                            }
                           },
-                    )
+                          icon: Image.network(gamesList[index]["cover_url"]),
+                          tooltip: getTooltip(gamesList[index]['name'],
+                              unixTimestamp: gamesList[index]
+                                  ["first_release_date"]),
+                          iconSize: 50,
+                        );
+                      },
+                      menuChildren: List<MenuItemButton>.generate(
+                          4,
+                          (int i) => MenuItemButton(
+                                onPressed: () => {
+                                  db.insert(gamesList[index],
+                                      status: Status.values[i]),
+                                  showSnackBar(context,
+                                      text:
+                                          '${gamesList[index]['name']} added to library under ${statusMap[Status.values[i]]}',
+                                      duration: Durations.extralong4),
+                                },
+                                child:
+                                    Text(statusMap.values.elementAt(i + 1)),
+                              )),
                     );
                   }),
                 )),

@@ -282,6 +282,21 @@ class GameItem extends DataClass implements Insertable<GameItem> {
         status: status ?? this.status,
         notes: notes.present ? notes.value : this.notes,
       );
+  GameItem copyWithCompanion(GameItemsCompanion data) {
+    return GameItem(
+      id: data.id.present ? data.id.value : this.id,
+      igdbID: data.igdbID.present ? data.igdbID.value : this.igdbID,
+      name: data.name.present ? data.name.value : this.name,
+      releaseDate:
+          data.releaseDate.present ? data.releaseDate.value : this.releaseDate,
+      cover: data.cover.present ? data.cover.value : this.cover,
+      summary: data.summary.present ? data.summary.value : this.summary,
+      platforms: data.platforms.present ? data.platforms.value : this.platforms,
+      status: data.status.present ? data.status.value : this.status,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('GameItem(')
@@ -450,7 +465,7 @@ class GameItemsCompanion extends UpdateCompanion<GameItem> {
 
 abstract class _$GameDB extends GeneratedDatabase {
   _$GameDB(QueryExecutor e) : super(e);
-  _$GameDBManager get managers => _$GameDBManager(this);
+  $GameDBManager get managers => $GameDBManager(this);
   late final $GameItemsTable gameItems = $GameItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -459,7 +474,7 @@ abstract class _$GameDB extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [gameItems];
 }
 
-typedef $$GameItemsTableInsertCompanionBuilder = GameItemsCompanion Function({
+typedef $$GameItemsTableCreateCompanionBuilder = GameItemsCompanion Function({
   Value<int> id,
   required int igdbID,
   required String name,
@@ -488,8 +503,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
     GameItem,
     $$GameItemsTableFilterComposer,
     $$GameItemsTableOrderingComposer,
-    $$GameItemsTableProcessedTableManager,
-    $$GameItemsTableInsertCompanionBuilder,
+    $$GameItemsTableCreateCompanionBuilder,
     $$GameItemsTableUpdateCompanionBuilder> {
   $$GameItemsTableTableManager(_$GameDB db, $GameItemsTable table)
       : super(TableManagerState(
@@ -499,9 +513,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
               $$GameItemsTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$GameItemsTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$GameItemsTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int> igdbID = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -523,7 +535,7 @@ class $$GameItemsTableTableManager extends RootTableManager<
             status: status,
             notes: notes,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int igdbID,
             required String name,
@@ -546,18 +558,6 @@ class $$GameItemsTableTableManager extends RootTableManager<
             notes: notes,
           ),
         ));
-}
-
-class $$GameItemsTableProcessedTableManager extends ProcessedTableManager<
-    _$GameDB,
-    $GameItemsTable,
-    GameItem,
-    $$GameItemsTableFilterComposer,
-    $$GameItemsTableOrderingComposer,
-    $$GameItemsTableProcessedTableManager,
-    $$GameItemsTableInsertCompanionBuilder,
-    $$GameItemsTableUpdateCompanionBuilder> {
-  $$GameItemsTableProcessedTableManager(super.$state);
 }
 
 class $$GameItemsTableFilterComposer
@@ -660,9 +660,9 @@ class $$GameItemsTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-class _$GameDBManager {
+class $GameDBManager {
   final _$GameDB _db;
-  _$GameDBManager(this._db);
+  $GameDBManager(this._db);
   $$GameItemsTableTableManager get gameItems =>
       $$GameItemsTableTableManager(_db, _db.gameItems);
 }

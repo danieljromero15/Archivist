@@ -1,4 +1,6 @@
+import 'package:archivist/pages/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 import 'api/igdb_api.dart';
 import 'db/database.dart';
@@ -23,9 +25,20 @@ Map<Status?, String> statusMap = {
   Status.completed: "100%",
 };
 
-void main() {
+dynamic firstPage;
+
+Future<void> main() async {
+  await Settings.init();
+
   database = GameDB();
   gamesApi = IGDBApi();
+
+  if(!await gamesApi!.test()) {
+    firstPage = const SettingsPage();
+  } else {
+    firstPage = const HomePage(title: 'Archivist Home Page');
+  }
+
   runApp(const MyApp());
 }
 
@@ -43,13 +56,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const HomePage(title: 'Archivist Home Page'),
+      home: firstPage,
     );
   }
 }
 
 String getTooltip(String name, {int? unixTimestamp, int? year}) {
-  String message; // originally returned a tooltip but turns out iconbuttons don't actually use tooltips yay
+  String
+      message; // originally returned a tooltip but turns out iconbuttons don't actually use tooltips yay
   if (unixTimestamp != null) {
     String time = DateTime.fromMillisecondsSinceEpoch(unixTimestamp * 1000)
         .year
@@ -63,13 +77,11 @@ String getTooltip(String name, {int? unixTimestamp, int? year}) {
   return message;
 }
 
-void showSnackBar(BuildContext context, {required String text}) {
+void showSnackBar(BuildContext context, {required String text, Duration duration = Durations.long4}) {
   final scaffold = ScaffoldMessenger.of(context);
-  scaffold.showSnackBar(
-      SnackBar(
-        content: Text(text),
-        action: SnackBarAction(label: 'HIDE',
-            onPressed: scaffold.hideCurrentSnackBar),
-      )
-  );
+  scaffold.showSnackBar(SnackBar(
+    content: Text(text),
+    duration: duration,
+    showCloseIcon: true,
+  ));
 }
